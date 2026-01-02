@@ -1,0 +1,56 @@
+.dashboard {
+  min-height: 100vh;
+  background-color: #0f0f0f;
+}
+
+.main {
+  padding: 3rem 2rem;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.welcome {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #94a3b8;
+  margin-bottom: 2rem;
+}
+
+.content {
+  background-color: #1a1a1a;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.userProfile {
+  background-color: #0f0f0f;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.userProfile pre {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  margin: 0;
+}
+
