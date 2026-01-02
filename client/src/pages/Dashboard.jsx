@@ -6,6 +6,7 @@ import ActionButtons from '../components/ActionButtons'
 import AddJobModal from '../components/AddJobModal'
 import EditJobModal from '../components/EditJobModal'
 import AddFiltersModal from '../components/AddFiltersModal'
+import DeleteJobModal from '../components/DeleteJobModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { applicationAPI } from '../utils/api'
@@ -17,6 +18,7 @@ function Dashboard() {
   const { getAccessTokenSilently } = useAuth0()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
   const [selectedJob, setSelectedJob] = useState(null)
   const [activeFilters, setActiveFilters] = useState({
@@ -82,6 +84,21 @@ function Dashboard() {
 
   const handleSubmitEditJob = async (jobId, formData) => {
     await applicationAPI.update(getAccessTokenSilently, jobId, formData)
+    await refetch()
+  }
+
+  const handleDeleteJob = (job) => {
+    setSelectedJob(job)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false)
+    setSelectedJob(null)
+  }
+
+  const handleConfirmDelete = async (jobId) => {
+    await applicationAPI.delete(getAccessTokenSilently, jobId)
     await refetch()
   }
 
@@ -177,7 +194,11 @@ function Dashboard() {
           ) : appsError ? (
             <p className={styles.errorText}>Error loading applications: {appsError}</p>
           ) : (
-            <JobList applications={filteredApplications} onEdit={handleEditJob} />
+            <JobList 
+              applications={filteredApplications} 
+              onEdit={handleEditJob}
+              onDelete={handleDeleteJob}
+            />
           )}
         </div>
       </main>
@@ -199,6 +220,13 @@ function Dashboard() {
         isOpen={isFiltersModalOpen}
         onClose={handleCloseFiltersModal}
         onApplyFilters={handleApplyFilters}
+      />
+
+      <DeleteJobModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        job={selectedJob}
       />
     </div>
   )

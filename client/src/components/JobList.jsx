@@ -1,6 +1,6 @@
 import styles from './JobList.module.css';
 
-function JobList({ applications, onEdit }) {
+function JobList({ applications, onEdit, onDelete }) {
   if (applications.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -27,13 +27,22 @@ function JobList({ applications, onEdit }) {
               <p className={styles.date}>
                 Applied: {new Date(app.date_applied).toLocaleDateString()}
               </p>
-              <button 
-                onClick={() => onEdit(app)} 
-                className={styles.editButton}
-                aria-label="Edit job"
-              >
-                Edit
-              </button>
+              <div className={styles.buttonGroup}>
+                <button 
+                  onClick={() => onDelete(app)} 
+                  className={styles.deleteButton}
+                  aria-label="Delete job"
+                >
+                  Delete
+                </button>
+                <button 
+                  onClick={() => onEdit(app)} 
+                  className={styles.editButton}
+                  aria-label="Edit job"
+                >
+                  Edit
+                </button>
+              </div>
             </div>
           </div>
         ))}
