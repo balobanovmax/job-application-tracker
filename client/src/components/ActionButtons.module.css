@@ -27,7 +27,6 @@
 .primaryButton:hover {
   background-color: #4f46e5;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .primaryButton:active {
@@ -48,6 +47,21 @@
 
 .secondaryButton:active {
   transform: translateY(0);
+}
+
+.filterBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #6366f1;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.375rem;
+  border-radius: 0.625rem;
+  margin-left: 0.5rem;
 }
 
 @media (max-width: 640px) {

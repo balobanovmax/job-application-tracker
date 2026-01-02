@@ -18,7 +18,7 @@
   border-radius: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
-  max-width: 500px;
+  max-width: 550px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
@@ -63,17 +63,33 @@
   color: #ffffff;
 }
 
-.closeButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .form {
   padding: 1.5rem;
 }
 
+.filterSection {
+  margin-bottom: 2rem;
+}
+
+.filterSection:last-of-type {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.dateRange {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .formGroup {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
 }
 
 .label {
@@ -84,8 +100,7 @@
   margin-bottom: 0.5rem;
 }
 
-.input,
-.select {
+.input {
   width: 100%;
   padding: 0.75rem;
   background-color: #0f0f0f;
@@ -97,17 +112,7 @@
   transition: all 0.2s;
 }
 
-.select {
-  padding-right: 2.5rem;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 12px;
-}
-
-.input:focus,
-.select:focus {
+.input:focus {
   outline: none;
   border-color: #6366f1;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
@@ -117,35 +122,83 @@
   color: #6b7280;
 }
 
-.input:disabled,
-.select:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
 }
 
-.select {
-  cursor: pointer;
-}
-
-.error {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #f87171;
+.statusButton {
   padding: 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  margin-bottom: 1rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+  font-family: inherit;
+}
+
+.statusButton.applied {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.statusButton.interview {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+}
+
+.statusButton.offer {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.statusButton.rejected {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.statusButton.statusActive.applied {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border-color: #60a5fa;
+}
+
+.statusButton.statusActive.interview {
+  background-color: #a855f7;
+  color: #ffffff;
+  border-color: #c084fc;
+}
+
+.statusButton.statusActive.offer {
+  background-color: #22c55e;
+  color: #ffffff;
+  border-color: #4ade80;
+}
+
+.statusButton.statusActive.rejected {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #f87171;
+}
+
+.statusButton:hover {
+  transform: translateY(-1px);
 }
 
 .formActions {
   display: flex;
   gap: 0.75rem;
   justify-content: center;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.cancelButton,
-.submitButton {
+.clearButton,
+.applyButton {
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-size: 0.9375rem;
@@ -156,30 +209,25 @@
   font-family: inherit;
 }
 
-.cancelButton {
+.clearButton {
   background-color: transparent;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.cancelButton:hover:not(:disabled) {
+.clearButton:hover {
   background-color: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-.submitButton {
+.applyButton {
   background-color: #6366f1;
   color: #ffffff;
 }
 
-.submitButton:hover:not(:disabled) {
+.applyButton:hover {
   background-color: #4f46e5;
-}
-
-.cancelButton:disabled,
-.submitButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 640px) {
@@ -189,12 +237,20 @@
     border-radius: 0;
   }
 
+  .dateRange {
+    grid-template-columns: 1fr;
+  }
+
+  .statusGrid {
+    grid-template-columns: 1fr;
+  }
+
   .formActions {
     flex-direction: column-reverse;
   }
 
-  .cancelButton,
-  .submitButton {
+  .clearButton,
+  .applyButton {
     width: 100%;
   }
 }

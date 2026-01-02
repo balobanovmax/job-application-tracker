@@ -1,16 +1,16 @@
 import styles from './ActionButtons.module.css';
 
-function ActionButtons({ onAddJob, onEditJob, onAddFilters, onClearFilters }) {
+function ActionButtons({ onAddJob, onAddFilters, onClearFilters, filterCount = 0 }) {
   return (
     <div className={styles.actionButtons}>
       <button onClick={onAddJob} className={styles.primaryButton}>
         Add Job
       </button>
-      <button onClick={onEditJob} className={styles.secondaryButton}>
-        Edit Job
-      </button>
       <button onClick={onAddFilters} className={styles.secondaryButton}>
         Add Filters
+        {filterCount > 0 && (
+          <span className={styles.filterBadge}>{filterCount}</span>
+        )}
       </button>
       <button onClick={onClearFilters} className={styles.secondaryButton}>
         Clear Filters

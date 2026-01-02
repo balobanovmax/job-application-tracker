@@ -1,11 +1,11 @@
 import styles from './JobList.module.css';
 
-function JobList({ applications }) {
+function JobList({ applications, onEdit }) {
   if (applications.length === 0) {
     return (
       <div className={styles.emptyState}>
         <p className={styles.emptyMessage}>
-          You haven't added any jobs yet. Add one to get started!
+          No job applications found.
         </p>
       </div>
     );
@@ -23,9 +23,18 @@ function JobList({ applications }) {
               </span>
             </div>
             <p className={styles.role}>{app.role}</p>
-            <p className={styles.date}>
-              Applied: {new Date(app.date_applied).toLocaleDateString()}
-            </p>
+            <div className={styles.jobFooter}>
+              <p className={styles.date}>
+                Applied: {new Date(app.date_applied).toLocaleDateString()}
+              </p>
+              <button 
+                onClick={() => onEdit(app)} 
+                className={styles.editButton}
+                aria-label="Edit job"
+              >
+                Edit
+              </button>
+            </div>
           </div>
         ))}
       </div>

@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import Navbar from '../components/Navbar'
 import JobList from '../components/JobList'
 import ActionButtons from '../components/ActionButtons'
 import AddJobModal from '../components/AddJobModal'
+import EditJobModal from '../components/EditJobModal'
+import AddFiltersModal from '../components/AddFiltersModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { applicationAPI } from '../utils/api'
@@ -14,6 +16,15 @@ function Dashboard() {
   const { applications, loading: appsLoading, error: appsError, refetch } = useApplications()
   const { getAccessTokenSilently } = useAuth0()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
+  const [selectedJob, setSelectedJob] = useState(null)
+  const [activeFilters, setActiveFilters] = useState({
+    dateFrom: '',
+    dateTo: '',
+    statuses: [],
+    companySearch: '',
+  })
 
   const handleAddJob = () => {
     setIsAddModalOpen(true)
@@ -28,17 +39,88 @@ function Dashboard() {
     await refetch() // Refetch applications to show the new job
   }
 
-  const handleEditJob = () => {
-    console.log('Edit Job clicked')
+  const handleAddFilters = () => {
+    setIsFiltersModalOpen(true)
   }
 
-  const handleAddFilters = () => {
-    console.log('Add Filters clicked')
+  const handleCloseFiltersModal = () => {
+    setIsFiltersModalOpen(false)
+  }
+
+  const handleApplyFilters = (filters) => {
+    setActiveFilters(filters)
   }
 
   const handleClearFilters = () => {
-    console.log('Clear Filters clicked')
+    setActiveFilters({
+      dateFrom: '',
+      dateTo: '',
+      statuses: [],
+      companySearch: '',
+    })
   }
+
+  // Calculate active filter count
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (activeFilters.dateFrom) count++;
+    if (activeFilters.dateTo) count++;
+    count += activeFilters.statuses.length;
+    if (activeFilters.companySearch.trim()) count++;
+    return count;
+  }, [activeFilters])
+
+  const handleEditJob = (job) => {
+    setSelectedJob(job)
+    setIsEditModalOpen(true)
+  }
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setSelectedJob(null)
+  }
+
+  const handleSubmitEditJob = async (jobId, formData) => {
+    await applicationAPI.update(getAccessTokenSilently, jobId, formData)
+    await refetch()
+  }
+
+  // Filter applications based on active filters
+  const filteredApplications = useMemo(() => {
+    let filtered = [...applications];
+
+    // Filter by date range (inclusive on both ends)
+    if (activeFilters.dateFrom) {
+      filtered = filtered.filter(app => {
+        const appDate = new Date(app.date_applied).toISOString().split('T')[0];
+        return appDate >= activeFilters.dateFrom;
+      });
+    }
+
+    if (activeFilters.dateTo) {
+      filtered = filtered.filter(app => {
+        const appDate = new Date(app.date_applied).toISOString().split('T')[0];
+        return appDate <= activeFilters.dateTo;
+      });
+    }
+
+    // Filter by status (if any statuses selected)
+    if (activeFilters.statuses.length > 0) {
+      filtered = filtered.filter(app => 
+        activeFilters.statuses.includes(app.status)
+      );
+    }
+
+    // Filter by company name (smart search)
+    if (activeFilters.companySearch.trim()) {
+      const searchTerm = activeFilters.companySearch.toLowerCase().trim();
+      filtered = filtered.filter(app => 
+        app.company.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    return filtered;
+  }, [applications, activeFilters])
 
   if (userLoading) {
     return (
@@ -85,9 +167,9 @@ function Dashboard() {
 
           <ActionButtons
             onAddJob={handleAddJob}
-            onEditJob={handleEditJob}
             onAddFilters={handleAddFilters}
             onClearFilters={handleClearFilters}
+            filterCount={activeFilterCount}
           />
 
           {appsLoading ? (
@@ -95,7 +177,7 @@ function Dashboard() {
           ) : appsError ? (
             <p className={styles.errorText}>Error loading applications: {appsError}</p>
           ) : (
-            <JobList applications={applications} />
+            <JobList applications={filteredApplications} onEdit={handleEditJob} />
           )}
         </div>
       </main>
@@ -104,6 +186,19 @@ function Dashboard() {
         isOpen={isAddModalOpen}
         onClose={handleCloseAddModal}
         onSubmit={handleSubmitAddJob}
+      />
+
+      <EditJobModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        onSubmit={handleSubmitEditJob}
+        job={selectedJob}
+      />
+
+      <AddFiltersModal
+        isOpen={isFiltersModalOpen}
+        onClose={handleCloseFiltersModal}
+        onApplyFilters={handleApplyFilters}
       />
     </div>
   )
