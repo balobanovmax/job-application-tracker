@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/applications.controller');
+const requireAuth = require('../middleware/requireAuth');
 
-router.get('/', controller.getAllApplications);
-router.get('/:id', controller.getApplicationById);
-router.post('/', controller.createApplication);
-router.patch('/:id', controller.updateApplication);
-router.delete('/:id', controller.deleteApplication);
-router.delete('/', controller.deleteAllApplications);
+router.get('/', requireAuth, controller.getAllApplications);
+router.get('/:id', requireAuth, controller.getApplicationById);
+router.post('/', requireAuth, controller.createApplication);
+router.patch('/:id', requireAuth, controller.updateApplication);
+router.delete('/:id', requireAuth, controller.deleteApplication);
+router.delete('/', requireAuth, controller.deleteAllApplications);
 
 module.exports = router;
 

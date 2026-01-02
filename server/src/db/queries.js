@@ -1,28 +1,25 @@
 const pool = require('./index');
 
-
-const findUserByEmail = async (email) => {
+const findUserByAuthSub = async (authSub) => {
   const result = await pool.query(
     'SELECT * FROM users WHERE email = $1',
-    [email]
+    [authSub]
   );
   return result.rows[0];
 };
 
-
-const createUser = async (email) => {
+const createUser = async (authSub) => {
   const result = await pool.query(
     'INSERT INTO users (email) VALUES ($1) RETURNING *',
-    [email]
+    [authSub]
   );
   return result.rows[0];
 };
 
-
-const findOrCreateUser = async (email) => {
-  let user = await findUserByEmail(email);
+const findOrCreateUser = async (authSub) => {
+  let user = await findUserByAuthSub(authSub);
   if (!user) {
-    user = await createUser(email);
+    user = await createUser(authSub);
   }
   return user;
 };
@@ -123,7 +120,7 @@ const deleteAllApplications = async (userId) => {
 };
 
 module.exports = {
-  findUserByEmail,
+  findUserByAuthSub,
   createUser,
   findOrCreateUser,
   getApplicationsByUserId,

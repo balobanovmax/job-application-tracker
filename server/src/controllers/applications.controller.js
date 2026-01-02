@@ -1,16 +1,11 @@
 const db = require('../db/queries');
 
-const getTempUserId = async () => {
-  const pool = require('../db/index');
-  const result = await pool.query("SELECT id FROM users WHERE email = 'temp@example.com'");
-  return result.rows[0]?.id || null;
-};
-
 const getAllApplications = async (req, res, next) => {
   try {
-    const userId = req.user?.id || await getTempUserId();
+    const authSub = req.auth.payload.sub;
     
-    let applications = await db.getApplicationsByUserId(userId);
+    const user = await db.findOrCreateUser(authSub);
+    let applications = await db.getApplicationsByUserId(user.id);
 
     const { status, company, date_applied } = req.query;
 
@@ -45,10 +40,11 @@ const getAllApplications = async (req, res, next) => {
 
 const getApplicationById = async (req, res, next) => {
   try {
-    const userId = req.user?.id || await getTempUserId();
+    const authSub = req.auth.payload.sub;
     const { id } = req.params;
 
-    const application = await db.getApplicationById(id, userId);
+    const user = await db.findOrCreateUser(authSub);
+    const application = await db.getApplicationById(id, user.id);
 
     if (!application) {
       return res.status(404).json({
@@ -68,7 +64,7 @@ const getApplicationById = async (req, res, next) => {
 
 const createApplication = async (req, res, next) => {
   try {
-    const userId = req.user?.id || await getTempUserId();
+    const authSub = req.auth.payload.sub;
     const { company, role, status, date_applied } = req.body;
 
     if (!company || !role) {
@@ -86,8 +82,9 @@ const createApplication = async (req, res, next) => {
       });
     }
 
+    const user = await db.findOrCreateUser(authSub);
     const application = await db.createApplication(
-      userId,
+      user.id,
       company,
       role,
       status,
@@ -105,11 +102,13 @@ const createApplication = async (req, res, next) => {
 
 const updateApplication = async (req, res, next) => {
   try {
-    const userId = req.user?.id || await getTempUserId();
+    const authSub = req.auth.payload.sub;
     const { id } = req.params;
     const { company, role, status, date_applied } = req.body;
 
-    const existingApp = await db.getApplicationById(id, userId);
+    const user = await db.findOrCreateUser(authSub);
+    const existingApp = await db.getApplicationById(id, user.id);
+    
     if (!existingApp) {
       return res.status(404).json({
         success: false,
@@ -131,7 +130,7 @@ const updateApplication = async (req, res, next) => {
     if (status !== undefined) updates.status = status;
     if (date_applied !== undefined) updates.date_applied = date_applied;
 
-    const application = await db.updateApplication(id, userId, updates);
+    const application = await db.updateApplication(id, user.id, updates);
 
     res.json({
       success: true,
@@ -144,10 +143,11 @@ const updateApplication = async (req, res, next) => {
 
 const deleteApplication = async (req, res, next) => {
   try {
-    const userId = req.user?.id || await getTempUserId();
+    const authSub = req.auth.payload.sub;
     const { id } = req.params;
 
-    const application = await db.deleteApplication(id, userId);
+    const user = await db.findOrCreateUser(authSub);
+    const application = await db.deleteApplication(id, user.id);
 
     if (!application) {
       return res.status(404).json({
@@ -168,9 +168,10 @@ const deleteApplication = async (req, res, next) => {
 
 const deleteAllApplications = async (req, res, next) => {
   try {
-    const userId = req.user?.id || await getTempUserId();
+    const authSub = req.auth.payload.sub;
 
-    const applications = await db.deleteAllApplications(userId);
+    const user = await db.findOrCreateUser(authSub);
+    const applications = await db.deleteAllApplications(user.id);
 
     res.json({
       success: true,
