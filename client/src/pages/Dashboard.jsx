@@ -10,6 +10,7 @@ import AddFiltersModal from '../components/AddFiltersModal'
 import SortModal from '../components/SortModal'
 import DeleteJobModal from '../components/DeleteJobModal'
 import DeleteAllJobsModal from '../components/DeleteAllJobsModal'
+import DuplicateWarningModal from '../components/DuplicateWarningModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { applicationAPI } from '../utils/api'
@@ -26,7 +27,10 @@ function Dashboard() {
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false)
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
   const [isSortModalOpen, setIsSortModalOpen] = useState(false)
+  const [isDuplicateWarningOpen, setIsDuplicateWarningOpen] = useState(false)
   const [selectedJob, setSelectedJob] = useState(null)
+  const [pendingJobData, setPendingJobData] = useState(null)
+  const [duplicateInfo, setDuplicateInfo] = useState(null)
   const [activeFilters, setActiveFilters] = useState({
     dateFrom: '',
     dateTo: '',
@@ -44,8 +48,47 @@ function Dashboard() {
   }
 
   const handleSubmitAddJob = async (formData) => {
-    await applicationAPI.create(getAccessTokenSilently, formData)
-    await refetch() // Refetch applications to show the new job
+    // Check for duplicates (exact match on company and role, case-insensitive)
+    const duplicates = applications.filter(app => 
+      app.company.toLowerCase().trim() === formData.company.toLowerCase().trim() &&
+      app.role.toLowerCase().trim() === formData.role.toLowerCase().trim()
+    );
+
+    if (duplicates.length > 0) {
+      // Store the form data and show duplicate warning
+      setPendingJobData(formData);
+      setDuplicateInfo({
+        company: formData.company,
+        role: formData.role,
+        existingCount: duplicates.length
+      });
+      setIsDuplicateWarningOpen(true);
+      // Return false to indicate duplicate found (modal should stay open)
+      return false;
+    } else {
+      // No duplicates, proceed with adding the job
+      await applicationAPI.create(getAccessTokenSilently, formData);
+      await refetch();
+      // Return true/undefined to indicate success (modal should close)
+      return true;
+    }
+  }
+
+  const handleCloseDuplicateWarning = () => {
+    setIsDuplicateWarningOpen(false);
+    setPendingJobData(null);
+    setDuplicateInfo(null);
+    // Keep Add Job modal open so user can edit
+  }
+
+  const handleConfirmDuplicate = async () => {
+    // User confirmed they want to add the duplicate
+    await applicationAPI.create(getAccessTokenSilently, pendingJobData);
+    await refetch();
+    setIsDuplicateWarningOpen(false);
+    setIsAddModalOpen(false); // Close both modals
+    setPendingJobData(null);
+    setDuplicateInfo(null);
   }
 
   const handleFilters = () => {
@@ -308,6 +351,13 @@ function Dashboard() {
         onClose={handleCloseDeleteAllModal}
         onConfirm={handleConfirmDeleteAll}
         jobCount={applications.length}
+      />
+
+      <DuplicateWarningModal
+        isOpen={isDuplicateWarningOpen}
+        onClose={handleCloseDuplicateWarning}
+        onConfirm={handleConfirmDuplicate}
+        duplicateInfo={duplicateInfo}
       />
     </div>
   )

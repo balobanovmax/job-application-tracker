@@ -56,12 +56,12 @@
   font-family: inherit;
 }
 
-.exportButton:hover {
+.exportButton:hover:not(:disabled) {
   background-color: #4f46e5;
   transform: translateY(-1px);
 }
 
-.exportButton:active {
+.exportButton:active:not(:disabled) {
   transform: translateY(0);
 }
 
@@ -69,11 +69,66 @@
   background-color: #9ca3af;
   cursor: not-allowed;
   transform: none;
+  opacity: 0.6;
 }
 
-.exportButton:disabled:hover {
-  background-color: #9ca3af;
-  transform: none;
+/* Export Dropdown Styles */
+.exportDropdownContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.exportDropdownMenu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  min-width: 200px;
+  z-index: 1000;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: #cbd5e1;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: block;
+}
+
+.dropdownItem:hover {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: #ffffff;
+}
+
+.dropdownItem:active {
+  background-color: rgba(99, 102, 241, 0.2);
+}
+
+.dropdownItem:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .loadingText,

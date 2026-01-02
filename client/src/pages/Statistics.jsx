@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { pdf } from '@react-pdf/renderer'
 import Navbar from '../components/Navbar'
 import FunnelChart from '../components/FunnelChart'
@@ -6,11 +6,13 @@ import LineChart from '../components/LineChart'
 import JobApplicationPDF from '../components/JobApplicationPDF'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
+import { exportJobApplicationsCSV } from '../utils/csvExport'
 import styles from './Statistics.module.css'
 
 function Statistics() {
   const { auth0User, loading: userLoading, error: userError } = useUser()
   const { applications, loading: appsLoading, error: appsError } = useApplications()
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false)
 
   // Calculate statistics
   const totalApplications = applications.length
@@ -130,6 +132,7 @@ function Statistics() {
 
   // Handle PDF export
   const handleExportPDF = async () => {
+    setIsExportDropdownOpen(false) // Close dropdown
     try {
       console.log('Starting PDF generation...');
       console.log('Applications:', applications);
@@ -158,6 +161,41 @@ function Statistics() {
       alert(`Failed to generate PDF. Error: ${error.message}`);
     }
   }
+
+  // Handle CSV export
+  const handleExportCSV = () => {
+    setIsExportDropdownOpen(false) // Close dropdown
+    try {
+      console.log('Starting CSV export...');
+      console.log('Applications:', applications);
+      
+      exportJobApplicationsCSV(applications);
+      console.log('CSV export completed successfully');
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      alert(`Failed to export CSV. Error: ${error.message}`);
+    }
+  }
+
+  // Toggle dropdown
+  const toggleExportDropdown = () => {
+    setIsExportDropdownOpen(!isExportDropdownOpen)
+  }
+
+  // Close dropdown when clicking outside
+  const handleClickOutside = (e) => {
+    if (!e.target.closest(`.${styles.exportDropdownContainer}`)) {
+      setIsExportDropdownOpen(false)
+    }
+  }
+
+  // Add event listener for clicking outside
+  useMemo(() => {
+    if (isExportDropdownOpen) {
+      document.addEventListener('click', handleClickOutside)
+      return () => document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isExportDropdownOpen])
 
   if (userLoading) {
     return (
@@ -199,13 +237,31 @@ function Statistics() {
                   Track your job search progress and insights
                 </p>
               </div>
-              <button 
-                className={styles.exportButton}
-                onClick={handleExportPDF}
-                disabled={applications.length === 0}
-              >
-                Export PDF Report
-              </button>
+              <div className={styles.exportDropdownContainer}>
+                <button 
+                  className={styles.exportButton}
+                  onClick={toggleExportDropdown}
+                  disabled={applications.length === 0}
+                >
+                  Export Report ▼
+                </button>
+                {isExportDropdownOpen && (
+                  <div className={styles.exportDropdownMenu}>
+                    <button 
+                      className={styles.dropdownItem}
+                      onClick={handleExportPDF}
+                    >
+                      Export PDF Report
+                    </button>
+                    <button 
+                      className={styles.dropdownItem}
+                      onClick={handleExportCSV}
+                    >
+                      Export CSV
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

@@ -46,17 +46,21 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
         notes: formData.notes.trim() || null,
         application_url: formData.application_url.trim() || null
       };
-      await onSubmit(dataToSubmit);
-      // Reset form and close modal on success
-      setFormData({
-        company: '',
-        role: '',
-        status: 'applied',
-        date_applied: new Date().toISOString().split('T')[0],
-        notes: '',
-        application_url: '',
-      });
-      onClose();
+      const success = await onSubmit(dataToSubmit);
+      
+      // Only reset form and close modal if submission was successful
+      // If duplicate detected, success will be false/undefined and modal stays open
+      if (success !== false) {
+        setFormData({
+          company: '',
+          role: '',
+          status: 'applied',
+          date_applied: new Date().toISOString().split('T')[0],
+          notes: '',
+          application_url: '',
+        });
+        onClose();
+      }
     } catch (err) {
       setError(err.message || 'Failed to add job');
     } finally {
