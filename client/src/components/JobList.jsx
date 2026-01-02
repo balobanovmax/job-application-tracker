@@ -36,6 +36,16 @@ function JobList({ applications, onEdit, onDelete }) {
                 <span className={styles.notesLabel}>Note:</span> {app.notes}
               </p>
             )}
+            {app.application_url && (
+              <a 
+                href={app.application_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={styles.applicationLink}
+              >
+                View Application →
+              </a>
+            )}
             <div className={styles.jobFooter}>
               <p className={styles.date}>
                 Applied: {new Date(app.date_applied).toLocaleDateString()}

@@ -74,19 +74,19 @@ const getApplicationByDateApplied = async (dateApplied, userId) => {
   return result.rows[0];
 };
 
-const createApplication = async (userId, company, role, status, dateApplied, notes) => {
+const createApplication = async (userId, company, role, status, dateApplied, notes, applicationUrl) => {
   const result = await pool.query(
-    `INSERT INTO applications (user_id, company, role, status, date_applied, notes) 
-     VALUES ($1, $2, $3, $4, $5, $6) 
+    `INSERT INTO applications (user_id, company, role, status, date_applied, notes, application_url) 
+     VALUES ($1, $2, $3, $4, $5, $6, $7) 
      RETURNING *`,
-    [userId, company, role, status || 'applied', dateApplied || new Date(), notes || null]
+    [userId, company, role, status || 'applied', dateApplied || new Date(), notes || null, applicationUrl || null]
   );
   return result.rows[0];
 };
 
 
 const updateApplication = async (applicationId, userId, updates) => {
-  const { company, role, status, date_applied, notes } = updates;
+  const { company, role, status, date_applied, notes, application_url } = updates;
   
   const result = await pool.query(
     `UPDATE applications 
@@ -94,10 +94,11 @@ const updateApplication = async (applicationId, userId, updates) => {
          role = COALESCE($2, role),
          status = COALESCE($3, status),
          date_applied = COALESCE($4, date_applied),
-         notes = COALESCE($5, notes)
-     WHERE id = $6 AND user_id = $7
+         notes = COALESCE($5, notes),
+         application_url = COALESCE($6, application_url)
+     WHERE id = $7 AND user_id = $8
      RETURNING *`,
-    [company, role, status, date_applied, notes, applicationId, userId]
+    [company, role, status, date_applied, notes, application_url, applicationId, userId]
   );
   return result.rows[0];
 };

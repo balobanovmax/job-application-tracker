@@ -8,6 +8,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
     status: 'applied',
     date_applied: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
     notes: '',
+    application_url: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -39,10 +40,11 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
     setError(null);
 
     try {
-      // Send notes only if not empty
+      // Send notes and application_url only if not empty
       const dataToSubmit = {
         ...formData,
-        notes: formData.notes.trim() || null
+        notes: formData.notes.trim() || null,
+        application_url: formData.application_url.trim() || null
       };
       await onSubmit(dataToSubmit);
       // Reset form and close modal on success
@@ -52,6 +54,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
         status: 'applied',
         date_applied: new Date().toISOString().split('T')[0],
         notes: '',
+        application_url: '',
       });
       onClose();
     } catch (err) {
@@ -69,6 +72,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
         status: 'applied',
         date_applied: new Date().toISOString().split('T')[0],
         notes: '',
+        application_url: '',
       });
       setError(null);
       onClose();
@@ -178,6 +182,22 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
             <div className={styles.charCounter}>
               {formData.notes.length}/50
             </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="application_url" className={styles.label}>
+              Application URL <span className={styles.optional}>(Optional)</span>
+            </label>
+            <input
+              type="url"
+              id="application_url"
+              name="application_url"
+              value={formData.application_url}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="e.g., https://jobs.company.com/apply/123"
+              disabled={loading}
+            />
           </div>
 
           {error && (

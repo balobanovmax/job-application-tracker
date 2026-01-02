@@ -8,6 +8,7 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
     status: 'applied',
     date_applied: '',
     notes: '',
+    application_url: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,6 +21,7 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
         status: job.status || 'applied',
         date_applied: job.date_applied ? new Date(job.date_applied).toISOString().split('T')[0] : '',
         notes: job.notes || '',
+        application_url: job.application_url || '',
       });
     }
   }, [job]);
@@ -50,10 +52,11 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
     setError(null);
 
     try {
-      // Send notes only if not empty
+      // Send notes and application_url only if not empty
       const dataToSubmit = {
         ...formData,
-        notes: formData.notes.trim() || null
+        notes: formData.notes.trim() || null,
+        application_url: formData.application_url.trim() || null
       };
       await onSubmit(job.id, dataToSubmit);
       onClose();
@@ -174,6 +177,22 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
             <div className={styles.charCounter}>
               {formData.notes.length}/50
             </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="application_url" className={styles.label}>
+              Application URL <span className={styles.optional}>(Optional)</span>
+            </label>
+            <input
+              type="url"
+              id="application_url"
+              name="application_url"
+              value={formData.application_url}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="e.g., https://jobs.company.com/apply/123"
+              disabled={loading}
+            />
           </div>
 
           {error && (
