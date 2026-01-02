@@ -124,7 +124,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
               className={styles.select}
               disabled={loading}
             >
-              <option value="applied">Applied</option>
+              <option value="applied">Applied (no response)</option>
               <option value="interview">Interview</option>
               <option value="offer">Offer</option>
               <option value="rejected">Rejected</option>

@@ -3,6 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
+import Statistics from './pages/Statistics'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -24,6 +25,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/statistics" 
+        element={
+          <ProtectedRoute>
+            <Statistics />
           </ProtectedRoute>
         } 
       />

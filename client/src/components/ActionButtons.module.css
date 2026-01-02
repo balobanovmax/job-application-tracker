@@ -64,6 +64,28 @@
   margin-left: 0.5rem;
 }
 
+.deleteAllButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.deleteAllButton:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.deleteAllButton:active {
+  transform: translateY(0);
+}
+
 @media (max-width: 640px) {
   .actionButtons {
     flex-direction: column;
@@ -71,7 +93,8 @@
   }
 
   .primaryButton,
-  .secondaryButton {
+  .secondaryButton,
+  .deleteAllButton {
     width: 100%;
   }
 }

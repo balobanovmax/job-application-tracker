@@ -1,6 +1,14 @@
 import styles from './JobList.module.css';
 
 function JobList({ applications, onEdit, onDelete }) {
+  // Helper function to format status display text
+  const formatStatus = (status) => {
+    if (status === 'applied') {
+      return 'Applied (no response)';
+    }
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
   if (applications.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -19,7 +27,7 @@ function JobList({ applications, onEdit, onDelete }) {
             <div className={styles.jobHeader}>
               <h3 className={styles.company}>{app.company}</h3>
               <span className={`${styles.status} ${styles[app.status]}`}>
-                {app.status}
+                {formatStatus(app.status)}
               </span>
             </div>
             <p className={styles.role}>{app.role}</p>

@@ -29,7 +29,8 @@
 
 .loginBtn,
 .signupBtn,
-.logoutBtn {
+.logoutBtn,
+.backBtn {
   padding: 0.625rem 1.5rem;
   border-radius: 0.375rem;
   font-size: 0.9375rem;
@@ -59,13 +60,15 @@
   background-color: #4f46e5;
 }
 
-.logoutBtn {
+.logoutBtn,
+.backBtn {
   background-color: transparent;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.logoutBtn:hover {
+.logoutBtn:hover,
+.backBtn:hover {
   background-color: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.3);
 }

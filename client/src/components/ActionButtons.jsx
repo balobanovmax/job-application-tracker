@@ -1,6 +1,6 @@
 import styles from './ActionButtons.module.css';
 
-function ActionButtons({ onAddJob, onAddFilters, onClearFilters, filterCount = 0 }) {
+function ActionButtons({ onAddJob, onAddFilters, onClearFilters, onViewStatistics, onDeleteAll, filterCount = 0 }) {
   return (
     <div className={styles.actionButtons}>
       <button onClick={onAddJob} className={styles.primaryButton}>
@@ -14,6 +14,12 @@ function ActionButtons({ onAddJob, onAddFilters, onClearFilters, filterCount = 0
       </button>
       <button onClick={onClearFilters} className={styles.secondaryButton}>
         Clear Filters
+      </button>
+      <button onClick={onViewStatistics} className={styles.secondaryButton}>
+        View Statistics
+      </button>
+      <button onClick={onDeleteAll} className={styles.deleteAllButton}>
+        Delete All Jobs
       </button>
     </div>
   );

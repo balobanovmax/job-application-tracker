@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import JobList from '../components/JobList'
 import ActionButtons from '../components/ActionButtons'
@@ -7,6 +8,7 @@ import AddJobModal from '../components/AddJobModal'
 import EditJobModal from '../components/EditJobModal'
 import AddFiltersModal from '../components/AddFiltersModal'
 import DeleteJobModal from '../components/DeleteJobModal'
+import DeleteAllJobsModal from '../components/DeleteAllJobsModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { applicationAPI } from '../utils/api'
@@ -16,9 +18,11 @@ function Dashboard() {
   const { auth0User, loading: userLoading, error: userError } = useUser()
   const { applications, loading: appsLoading, error: appsError, refetch } = useApplications()
   const { getAccessTokenSilently } = useAuth0()
+  const navigate = useNavigate()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false)
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
   const [selectedJob, setSelectedJob] = useState(null)
   const [activeFilters, setActiveFilters] = useState({
@@ -99,6 +103,19 @@ function Dashboard() {
 
   const handleConfirmDelete = async (jobId) => {
     await applicationAPI.delete(getAccessTokenSilently, jobId)
+    await refetch()
+  }
+
+  const handleDeleteAllJobs = () => {
+    setIsDeleteAllModalOpen(true)
+  }
+
+  const handleCloseDeleteAllModal = () => {
+    setIsDeleteAllModalOpen(false)
+  }
+
+  const handleConfirmDeleteAll = async () => {
+    await applicationAPI.deleteAll(getAccessTokenSilently)
     await refetch()
   }
 
@@ -186,6 +203,8 @@ function Dashboard() {
             onAddJob={handleAddJob}
             onAddFilters={handleAddFilters}
             onClearFilters={handleClearFilters}
+            onViewStatistics={() => navigate('/statistics')}
+            onDeleteAll={handleDeleteAllJobs}
             filterCount={activeFilterCount}
           />
 
@@ -227,6 +246,13 @@ function Dashboard() {
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
         job={selectedJob}
+      />
+
+      <DeleteAllJobsModal
+        isOpen={isDeleteAllModalOpen}
+        onClose={handleCloseDeleteAllModal}
+        onConfirm={handleConfirmDeleteAll}
+        jobCount={applications.length}
       />
     </div>
   )

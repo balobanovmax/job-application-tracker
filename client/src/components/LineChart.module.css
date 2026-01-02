@@ -1,0 +1,161 @@
+.chartContainer {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  min-height: 300px;
+}
+
+.yAxisLabel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-width: 40px;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.yAxisLabel span {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.chartArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.barsContainer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  gap: 0.5rem;
+  height: 250px;
+  min-width: 100%;
+}
+
+.barWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 30px;
+  max-width: 60px;
+  height: 100%;
+}
+
+.bar {
+  width: 100%;
+  background: linear-gradient(0deg, #4f46e5 0%, #6366f1 100%);
+  border-radius: 0.25rem 0.25rem 0 0;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.25rem;
+  position: relative;
+}
+
+.bar:hover {
+  background: linear-gradient(0deg, #6366f1 0%, #818cf8 100%);
+  transform: scaleY(1.02);
+}
+
+.emptyBar {
+  width: 100%;
+  height: 0;
+}
+
+.barValue {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.xLabel {
+  font-size: 0.6875rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-top: 0.5rem;
+  white-space: nowrap;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emptyState {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  color: #94a3b8;
+  font-size: 1rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .chartContainer {
+    min-height: 250px;
+  }
+
+  .yAxisLabel {
+    min-width: 30px;
+    padding-right: 0.5rem;
+  }
+
+  .yAxisLabel span {
+    font-size: 0.75rem;
+  }
+
+  .barsContainer {
+    height: 200px;
+    gap: 0.25rem;
+  }
+
+  .barWrapper {
+    min-width: 20px;
+    max-width: 40px;
+  }
+
+  .barValue {
+    font-size: 0.625rem;
+  }
+
+  .xLabel {
+    font-size: 0.625rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chartContainer {
+    min-height: 200px;
+  }
+
+  .barsContainer {
+    height: 150px;
+  }
+
+  .barWrapper {
+    min-width: 15px;
+    max-width: 30px;
+  }
+
+  .xLabel {
+    font-size: 0.5625rem;
+  }
+}
