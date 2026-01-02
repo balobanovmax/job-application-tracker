@@ -19,8 +19,8 @@ export const useApplications = () => {
       setLoading(true);
       setError(null);
 
-      const data = await applicationAPI.getAll(getAccessTokenSilently);
-      setApplications(data.applications || []);
+      const response = await applicationAPI.getAll(getAccessTokenSilently);
+      setApplications(response.data || []);
     } catch (err) {
       console.error('Error fetching applications:', err);
       setError(err.message);

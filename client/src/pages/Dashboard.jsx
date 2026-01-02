@@ -1,12 +1,44 @@
+import { useState } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
 import Navbar from '../components/Navbar'
 import JobList from '../components/JobList'
+import ActionButtons from '../components/ActionButtons'
+import AddJobModal from '../components/AddJobModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
+import { applicationAPI } from '../utils/api'
 import styles from './Dashboard.module.css'
 
 function Dashboard() {
   const { auth0User, loading: userLoading, error: userError } = useUser()
-  const { applications, loading: appsLoading, error: appsError } = useApplications()
+  const { applications, loading: appsLoading, error: appsError, refetch } = useApplications()
+  const { getAccessTokenSilently } = useAuth0()
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
+  const handleAddJob = () => {
+    setIsAddModalOpen(true)
+  }
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false)
+  }
+
+  const handleSubmitAddJob = async (formData) => {
+    await applicationAPI.create(getAccessTokenSilently, formData)
+    await refetch() // Refetch applications to show the new job
+  }
+
+  const handleEditJob = () => {
+    console.log('Edit Job clicked')
+  }
+
+  const handleAddFilters = () => {
+    console.log('Add Filters clicked')
+  }
+
+  const handleClearFilters = () => {
+    console.log('Clear Filters clicked')
+  }
 
   if (userLoading) {
     return (
@@ -51,6 +83,13 @@ function Dashboard() {
             </p>
           </div>
 
+          <ActionButtons
+            onAddJob={handleAddJob}
+            onEditJob={handleEditJob}
+            onAddFilters={handleAddFilters}
+            onClearFilters={handleClearFilters}
+          />
+
           {appsLoading ? (
             <p className={styles.loadingText}>Loading your applications...</p>
           ) : appsError ? (
@@ -60,6 +99,12 @@ function Dashboard() {
           )}
         </div>
       </main>
+
+      <AddJobModal
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onSubmit={handleSubmitAddJob}
+      />
     </div>
   )
 }
