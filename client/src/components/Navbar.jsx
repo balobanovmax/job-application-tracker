@@ -5,7 +5,9 @@ function Navbar() {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
 
   const handleLogin = () => {
-    loginWithRedirect()
+    loginWithRedirect({
+      appState: { returnTo: '/dashboard' }
+    })
   }
 
   const handleSignup = () => {
@@ -13,7 +15,8 @@ function Navbar() {
       authorizationParams: { 
         screen_hint: 'signup',
         connection: 'google-oauth2'
-      } 
+      },
+      appState: { returnTo: '/dashboard' }
     })
   }
 

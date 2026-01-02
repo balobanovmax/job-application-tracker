@@ -1,27 +1,34 @@
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
+import { useEffect } from 'react'
 import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
-  const { isLoading, isAuthenticated } = useAuth0()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { isAuthenticated, isLoading } = useAuth0()
 
-  if (isLoading) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        backgroundColor: '#242424',
-        color: '#ffffff',
-        fontSize: '1.5rem'
-      }}>
-        Loading...
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && location.pathname === '/') {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, isLoading, location.pathname, navigate])
 
-  return isAuthenticated ? <Dashboard /> : <Landing />
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+    </Routes>
+  )
 }
 
 export default App
