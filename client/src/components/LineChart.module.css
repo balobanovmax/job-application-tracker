@@ -37,10 +37,11 @@
 .barsContainer {
   display: flex;
   align-items: flex-end;
-  justify-content: space-evenly;
-  gap: 0.5rem;
+  justify-content: flex-start;
+  gap: 1.5rem;
   height: 250px;
   min-width: 100%;
+  padding: 0 1rem;
 }
 
 .barWrapper {
@@ -48,8 +49,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  flex: 1;
-  min-width: 30px;
+  min-width: 40px;
   max-width: 60px;
   height: 100%;
 }
@@ -75,6 +75,21 @@
 .emptyBar {
   width: 100%;
   height: 0;
+}
+
+.emptyBarPlaceholder {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  margin-bottom: 0.5rem;
+}
+
+.noneText {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
 }
 
 .barValue {
@@ -124,12 +139,13 @@
 
   .barsContainer {
     height: 200px;
-    gap: 0.25rem;
+    gap: 1rem;
+    padding: 0 0.5rem;
   }
 
   .barWrapper {
-    min-width: 20px;
-    max-width: 40px;
+    min-width: 30px;
+    max-width: 50px;
   }
 
   .barValue {
@@ -148,11 +164,12 @@
 
   .barsContainer {
     height: 150px;
+    gap: 0.75rem;
   }
 
   .barWrapper {
-    min-width: 15px;
-    max-width: 30px;
+    min-width: 25px;
+    max-width: 40px;
   }
 
   .xLabel {

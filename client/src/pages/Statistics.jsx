@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
+import { pdf } from '@react-pdf/renderer'
 import Navbar from '../components/Navbar'
 import FunnelChart from '../components/FunnelChart'
 import LineChart from '../components/LineChart'
+import JobApplicationPDF from '../components/JobApplicationPDF'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import styles from './Statistics.module.css'
@@ -31,7 +33,6 @@ function Statistics() {
     { label: 'Rejected', value: rejectedCount, color: '#ef4444' },
   ]
 
-  // Prepare time series data with automatic granularity
   const timeSeriesData = useMemo(() => {
     if (applications.length === 0) return [];
 
@@ -127,6 +128,37 @@ function Statistics() {
     }
   }, [applications])
 
+  // Handle PDF export
+  const handleExportPDF = async () => {
+    try {
+      console.log('Starting PDF generation...');
+      console.log('Applications:', applications);
+      console.log('User:', auth0User);
+      
+      const userName = auth0User?.name || auth0User?.email || 'User';
+      
+      console.log('Creating PDF blob...');
+      const blob = await pdf(
+        <JobApplicationPDF userName={userName} applications={applications} />
+      ).toBlob();
+      
+      console.log('PDF blob created successfully');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Job_Application_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      console.log('PDF download initiated');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      console.error('Error stack:', error.stack);
+      alert(`Failed to generate PDF. Error: ${error.message}`);
+    }
+  }
+
   if (userLoading) {
     return (
       <div className={styles.statistics}>
@@ -160,10 +192,21 @@ function Statistics() {
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <h1 className={styles.title}>Application Statistics</h1>
-            <p className={styles.subtitle}>
-              Track your job search progress and insights
-            </p>
+            <div className={styles.headerContent}>
+              <div className={styles.headerText}>
+                <h1 className={styles.title}>Application Statistics</h1>
+                <p className={styles.subtitle}>
+                  Track your job search progress and insights
+                </p>
+              </div>
+              <button 
+                className={styles.exportButton}
+                onClick={handleExportPDF}
+                disabled={applications.length === 0}
+              >
+                Export PDF Report
+              </button>
+            </div>
           </div>
 
           {appsLoading ? (
@@ -194,7 +237,7 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{appliedCount}</p>
-                        <p className={styles.cardPercentage}>{calculatePercentage(appliedCount)}%</p>
+                        <p className={styles.cardPercentage}>({calculatePercentage(appliedCount)}%)</p>
                       </div>
                     </div>
 
@@ -207,7 +250,7 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{interviewCount}</p>
-                        <p className={styles.cardPercentage}>{calculatePercentage(interviewCount)}%</p>
+                        <p className={styles.cardPercentage}>({calculatePercentage(interviewCount)}%)</p>
                       </div>
                     </div>
 
@@ -220,7 +263,7 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{offerCount}</p>
-                        <p className={styles.cardPercentage}>{calculatePercentage(offerCount)}%</p>
+                        <p className={styles.cardPercentage}>({calculatePercentage(offerCount)}%)</p>
                       </div>
                     </div>
 
@@ -233,7 +276,7 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{rejectedCount}</p>
-                        <p className={styles.cardPercentage}>{calculatePercentage(rejectedCount)}%</p>
+                        <p className={styles.cardPercentage}>({calculatePercentage(rejectedCount)}%)</p>
                       </div>
                     </div>
                   </div>

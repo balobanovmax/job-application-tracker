@@ -48,7 +48,9 @@ function LineChart({ data }) {
                   <span className={styles.barValue}>{bar.value}</span>
                 </div>
               ) : (
-                <div className={styles.emptyBar}></div>
+                <div className={styles.emptyBarPlaceholder}>
+                  <span className={styles.noneText}>None</span>
+                </div>
               )}
               <span className={styles.xLabel}>{bar.label}</span>
             </div>

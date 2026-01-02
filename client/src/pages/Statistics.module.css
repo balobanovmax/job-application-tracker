@@ -13,8 +13,19 @@
 }
 
 .header {
-  text-align: center;
   margin-bottom: 3rem;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.headerText {
+  flex: 1;
+  text-align: left;
 }
 
 .title {
@@ -29,6 +40,40 @@
   font-size: 1.125rem;
   color: #cbd5e1;
   margin: 0;
+}
+
+.exportButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  background-color: #6366f1;
+  color: #ffffff;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.exportButton:hover {
+  background-color: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.exportButton:active {
+  transform: translateY(0);
+}
+
+.exportButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.exportButton:disabled:hover {
+  background-color: #9ca3af;
+  transform: none;
 }
 
 .loadingText,
@@ -172,6 +217,20 @@
 }
 
 @media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .headerText {
+    text-align: left;
+  }
+
+  .exportButton {
+    width: 100%;
+  }
+
   .title {
     font-size: 2rem;
   }
