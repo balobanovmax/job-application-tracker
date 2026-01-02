@@ -31,6 +31,11 @@ function JobList({ applications, onEdit, onDelete }) {
               </span>
             </div>
             <p className={styles.role}>{app.role}</p>
+            {app.notes && (
+              <p className={styles.notes}>
+                <span className={styles.notesLabel}>Note:</span> {app.notes}
+              </p>
+            )}
             <div className={styles.jobFooter}>
               <p className={styles.date}>
                 Applied: {new Date(app.date_applied).toLocaleDateString()}

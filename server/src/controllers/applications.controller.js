@@ -65,7 +65,7 @@ const getApplicationById = async (req, res, next) => {
 const createApplication = async (req, res, next) => {
   try {
     const authSub = req.auth.payload.sub;
-    const { company, role, status, date_applied } = req.body;
+    const { company, role, status, date_applied, notes } = req.body;
 
     if (!company || !role) {
       return res.status(400).json({
@@ -82,13 +82,22 @@ const createApplication = async (req, res, next) => {
       });
     }
 
+    // Validate notes length (max 50 characters)
+    if (notes && notes.length > 50) {
+      return res.status(400).json({
+        success: false,
+        error: 'Notes must be 50 characters or less'
+      });
+    }
+
     const user = await db.findOrCreateUser(authSub);
     const application = await db.createApplication(
       user.id,
       company,
       role,
       status,
-      date_applied
+      date_applied,
+      notes
     );
 
     res.status(201).json({
@@ -104,7 +113,7 @@ const updateApplication = async (req, res, next) => {
   try {
     const authSub = req.auth.payload.sub;
     const { id } = req.params;
-    const { company, role, status, date_applied } = req.body;
+    const { company, role, status, date_applied, notes } = req.body;
 
     const user = await db.findOrCreateUser(authSub);
     const existingApp = await db.getApplicationById(id, user.id);
@@ -124,11 +133,20 @@ const updateApplication = async (req, res, next) => {
       });
     }
 
+    // Validate notes length (max 50 characters)
+    if (notes && notes.length > 50) {
+      return res.status(400).json({
+        success: false,
+        error: 'Notes must be 50 characters or less'
+      });
+    }
+
     const updates = {};
     if (company !== undefined) updates.company = company;
     if (role !== undefined) updates.role = role;
     if (status !== undefined) updates.status = status;
     if (date_applied !== undefined) updates.date_applied = date_applied;
+    if (notes !== undefined) updates.notes = notes;
 
     const application = await db.updateApplication(id, user.id, updates);
 

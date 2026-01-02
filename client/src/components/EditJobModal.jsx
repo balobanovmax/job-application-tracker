@@ -7,6 +7,7 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
     role: '',
     status: 'applied',
     date_applied: '',
+    notes: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,6 +19,7 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
         role: job.role || '',
         status: job.status || 'applied',
         date_applied: job.date_applied ? new Date(job.date_applied).toISOString().split('T')[0] : '',
+        notes: job.notes || '',
       });
     }
   }, [job]);
@@ -38,11 +40,22 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
       return;
     }
 
+    // Validate notes length (max 50 characters)
+    if (formData.notes && formData.notes.length > 50) {
+      setError('Notes must be 50 characters or less');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      await onSubmit(job.id, formData);
+      // Send notes only if not empty
+      const dataToSubmit = {
+        ...formData,
+        notes: formData.notes.trim() || null
+      };
+      await onSubmit(job.id, dataToSubmit);
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to update job');
@@ -141,6 +154,26 @@ function EditJobModal({ isOpen, onClose, onSubmit, job }) {
               className={styles.input}
               disabled={loading}
             />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="notes" className={styles.label}>
+              Notes <span className={styles.optional}>(Optional, max 50 chars)</span>
+            </label>
+            <input
+              type="text"
+              id="notes"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="e.g., Referral from John"
+              maxLength={50}
+              disabled={loading}
+            />
+            <div className={styles.charCounter}>
+              {formData.notes.length}/50
+            </div>
           </div>
 
           {error && (

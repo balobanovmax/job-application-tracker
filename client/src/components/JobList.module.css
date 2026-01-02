@@ -109,6 +109,17 @@
   margin: 0.5rem 0 0 0;
 }
 
+.notes {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0.5rem 0 0 0;
+}
+
+.notesLabel {
+  font-weight: 500;
+  color: #94a3b8;
+}
+
 .date {
   font-size: 0.875rem;
   color: #94a3b8;

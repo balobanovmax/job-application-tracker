@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './AddFiltersModal.module.css';
 
-function AddFiltersModal({ isOpen, onClose, onApplyFilters }) {
+function AddFiltersModal({ isOpen, onClose, onApplyFilters, onClearFilters, initialFilters }) {
   const [filters, setFilters] = useState({
     dateFrom: '',
     dateTo: '',
     statuses: [],
     companySearch: '',
   });
+
+  useEffect(() => {
+    if (isOpen && initialFilters) {
+      setFilters(initialFilters);
+    }
+  }, [isOpen, initialFilters]);
 
   const handleStatusToggle = (status) => {
     setFilters(prev => ({
@@ -28,16 +34,10 @@ function AddFiltersModal({ isOpen, onClose, onApplyFilters }) {
 
   const handleApply = () => {
     onApplyFilters(filters);
-    onClose();
   };
 
   const handleClear = () => {
-    setFilters({
-      dateFrom: '',
-      dateTo: '',
-      statuses: [],
-      companySearch: '',
-    });
+    onClearFilters();
   };
 
   const handleClose = () => {

@@ -45,7 +45,7 @@ function Dashboard() {
     await refetch() // Refetch applications to show the new job
   }
 
-  const handleAddFilters = () => {
+  const handleFilters = () => {
     setIsFiltersModalOpen(true)
   }
 
@@ -55,6 +55,7 @@ function Dashboard() {
 
   const handleApplyFilters = (filters) => {
     setActiveFilters(filters)
+    setIsFiltersModalOpen(false) // Close modal after applying
   }
 
   const handleClearFilters = () => {
@@ -64,6 +65,7 @@ function Dashboard() {
       statuses: [],
       companySearch: '',
     })
+    setIsFiltersModalOpen(false) // Close modal after clearing
   }
 
   // Calculate active filter count
@@ -201,8 +203,7 @@ function Dashboard() {
 
           <ActionButtons
             onAddJob={handleAddJob}
-            onAddFilters={handleAddFilters}
-            onClearFilters={handleClearFilters}
+            onFilters={handleFilters}
             onViewStatistics={() => navigate('/statistics')}
             onDeleteAll={handleDeleteAllJobs}
             filterCount={activeFilterCount}
@@ -239,6 +240,8 @@ function Dashboard() {
         isOpen={isFiltersModalOpen}
         onClose={handleCloseFiltersModal}
         onApplyFilters={handleApplyFilters}
+        onClearFilters={handleClearFilters}
+        initialFilters={activeFilters}
       />
 
       <DeleteJobModal

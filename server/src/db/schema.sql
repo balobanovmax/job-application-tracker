@@ -16,6 +16,7 @@ CREATE TABLE applications (
     role TEXT NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('applied', 'interview', 'offer', 'rejected')) DEFAULT 'applied',
     date_applied DATE DEFAULT CURRENT_DATE,
+    notes TEXT CHECK (notes IS NULL OR LENGTH(notes) <= 50),
     created_at TIMESTAMP DEFAULT NOW()
 );
 

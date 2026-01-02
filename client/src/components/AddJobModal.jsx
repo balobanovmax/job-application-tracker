@@ -7,6 +7,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
     role: '',
     status: 'applied',
     date_applied: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+    notes: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -28,17 +29,29 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
       return;
     }
 
+    // Validate notes length (max 50 characters)
+    if (formData.notes && formData.notes.length > 50) {
+      setError('Notes must be 50 characters or less');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      await onSubmit(formData);
+      // Send notes only if not empty
+      const dataToSubmit = {
+        ...formData,
+        notes: formData.notes.trim() || null
+      };
+      await onSubmit(dataToSubmit);
       // Reset form and close modal on success
       setFormData({
         company: '',
         role: '',
         status: 'applied',
         date_applied: new Date().toISOString().split('T')[0],
+        notes: '',
       });
       onClose();
     } catch (err) {
@@ -55,6 +68,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
         role: '',
         status: 'applied',
         date_applied: new Date().toISOString().split('T')[0],
+        notes: '',
       });
       setError(null);
       onClose();
@@ -144,6 +158,26 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
               className={styles.input}
               disabled={loading}
             />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="notes" className={styles.label}>
+              Notes <span className={styles.optional}>(Optional, max 50 chars)</span>
+            </label>
+            <input
+              type="text"
+              id="notes"
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="e.g., Referral from John"
+              maxLength={50}
+              disabled={loading}
+            />
+            <div className={styles.charCounter}>
+              {formData.notes.length}/50
+            </div>
           </div>
 
           {error && (
