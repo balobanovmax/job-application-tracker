@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/applications.controller');
-const requireAuth = require('../middleware/requireAuth');
+const { requireAuth } = require('../middleware/requireAuth');
 
 router.get('/', requireAuth, controller.getAllApplications);
 router.get('/:id', requireAuth, controller.getApplicationById);

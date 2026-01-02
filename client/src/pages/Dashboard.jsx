@@ -1,9 +1,40 @@
-import { useAuth0 } from '@auth0/auth0-react'
 import Navbar from '../components/Navbar'
+import JobList from '../components/JobList'
+import { useUser } from '../hooks/useUser'
+import { useApplications } from '../hooks/useApplications'
 import styles from './Dashboard.module.css'
 
 function Dashboard() {
-  const { user } = useAuth0()
+  const { auth0User, loading: userLoading, error: userError } = useUser()
+  const { applications, loading: appsLoading, error: appsError } = useApplications()
+
+  if (userLoading) {
+    return (
+      <div className={styles.dashboard}>
+        <Navbar />
+        <main className={styles.main}>
+          <div className={styles.container}>
+            <p className={styles.loadingText}>Loading your profile...</p>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  if (userError) {
+    return (
+      <div className={styles.dashboard}>
+        <Navbar />
+        <main className={styles.main}>
+          <div className={styles.container}>
+            <p className={styles.errorText}>
+              Error: {userError}
+            </p>
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.dashboard}>
@@ -11,15 +42,22 @@ function Dashboard() {
       
       <main className={styles.main}>
         <div className={styles.container}>
-          <h1 className={styles.welcome}>Welcome back, {user?.name || user?.email}!</h1>
-          <p className={styles.subtitle}>Manage your job applications and track your progress.</p>
-          
-          <div className={styles.content}>
-            <h2 className={styles.sectionTitle}>User Profile</h2>
-            <div className={styles.userProfile}>
-              <pre>{JSON.stringify(user, null, 2)}</pre>
-            </div>
+          <div className={styles.header}>
+            <h1 className={styles.welcome}>
+              Welcome back, {auth0User?.name || auth0User?.email}!
+            </h1>
+            <p className={styles.subtitle}>
+              Manage your job applications and track your progress.
+            </p>
           </div>
+
+          {appsLoading ? (
+            <p className={styles.loadingText}>Loading your applications...</p>
+          ) : appsError ? (
+            <p className={styles.errorText}>Error loading applications: {appsError}</p>
+          ) : (
+            <JobList applications={applications} />
+          )}
         </div>
       </main>
     </div>

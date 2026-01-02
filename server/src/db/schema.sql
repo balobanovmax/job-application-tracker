@@ -3,6 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Users
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    auth0_id TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -22,5 +23,6 @@ CREATE TABLE applications (
 CREATE INDEX idx_applications_user_id ON applications(user_id);
 CREATE INDEX idx_applications_status ON applications(status);
 CREATE INDEX idx_applications_date_applied ON applications(date_applied);
+CREATE INDEX idx_users_auth0_id ON users(auth0_id);
 CREATE INDEX idx_users_email ON users(email);
 

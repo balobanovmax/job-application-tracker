@@ -6,5 +6,5 @@ const requireAuth = auth({
   tokenSigningAlg: 'RS256'
 });
 
-module.exports = requireAuth;
+module.exports = { requireAuth };
 
