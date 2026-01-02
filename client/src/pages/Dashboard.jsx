@@ -7,6 +7,7 @@ import ActionButtons from '../components/ActionButtons'
 import AddJobModal from '../components/AddJobModal'
 import EditJobModal from '../components/EditJobModal'
 import AddFiltersModal from '../components/AddFiltersModal'
+import SortModal from '../components/SortModal'
 import DeleteJobModal from '../components/DeleteJobModal'
 import DeleteAllJobsModal from '../components/DeleteAllJobsModal'
 import { useUser } from '../hooks/useUser'
@@ -24,6 +25,7 @@ function Dashboard() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false)
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
+  const [isSortModalOpen, setIsSortModalOpen] = useState(false)
   const [selectedJob, setSelectedJob] = useState(null)
   const [activeFilters, setActiveFilters] = useState({
     dateFrom: '',
@@ -31,6 +33,7 @@ function Dashboard() {
     statuses: [],
     companySearch: '',
   })
+  const [activeSort, setActiveSort] = useState('')
 
   const handleAddJob = () => {
     setIsAddModalOpen(true)
@@ -121,11 +124,32 @@ function Dashboard() {
     await refetch()
   }
 
-  // Filter applications based on active filters
-  const filteredApplications = useMemo(() => {
+  const handleSort = () => {
+    setIsSortModalOpen(true)
+  }
+
+  const handleCloseSortModal = () => {
+    setIsSortModalOpen(false)
+  }
+
+  const handleApplySort = (sortOption) => {
+    setActiveSort(sortOption)
+    setIsSortModalOpen(false)
+  }
+
+  const handleClearSort = () => {
+    setActiveSort('')
+    setIsSortModalOpen(false)
+  }
+
+  // Calculate sort count (0 or 1)
+  const sortCount = activeSort ? 1 : 0
+
+  // Filter and sort applications
+  const filteredAndSortedApplications = useMemo(() => {
     let filtered = [...applications];
 
-    // Filter by date range (inclusive on both ends)
+    // Apply filters first
     if (activeFilters.dateFrom) {
       filtered = filtered.filter(app => {
         const appDate = new Date(app.date_applied).toISOString().split('T')[0];
@@ -140,14 +164,12 @@ function Dashboard() {
       });
     }
 
-    // Filter by status (if any statuses selected)
     if (activeFilters.statuses.length > 0) {
       filtered = filtered.filter(app => 
         activeFilters.statuses.includes(app.status)
       );
     }
 
-    // Filter by company name (smart search)
     if (activeFilters.companySearch.trim()) {
       const searchTerm = activeFilters.companySearch.toLowerCase().trim();
       filtered = filtered.filter(app => 
@@ -155,8 +177,28 @@ function Dashboard() {
       );
     }
 
+    // Apply sorting
+    if (activeSort) {
+      switch (activeSort) {
+        case 'date_asc':
+          filtered.sort((a, b) => new Date(a.date_applied) - new Date(b.date_applied));
+          break;
+        case 'date_desc':
+          filtered.sort((a, b) => new Date(b.date_applied) - new Date(a.date_applied));
+          break;
+        case 'company_asc':
+          filtered.sort((a, b) => a.company.toLowerCase().localeCompare(b.company.toLowerCase()));
+          break;
+        case 'company_desc':
+          filtered.sort((a, b) => b.company.toLowerCase().localeCompare(a.company.toLowerCase()));
+          break;
+        default:
+          break;
+      }
+    }
+
     return filtered;
-  }, [applications, activeFilters])
+  }, [applications, activeFilters, activeSort])
 
   if (userLoading) {
     return (
@@ -204,9 +246,11 @@ function Dashboard() {
           <ActionButtons
             onAddJob={handleAddJob}
             onFilters={handleFilters}
+            onSort={handleSort}
             onViewStatistics={() => navigate('/statistics')}
             onDeleteAll={handleDeleteAllJobs}
             filterCount={activeFilterCount}
+            sortCount={sortCount}
           />
 
           {appsLoading ? (
@@ -215,7 +259,7 @@ function Dashboard() {
             <p className={styles.errorText}>Error loading applications: {appsError}</p>
           ) : (
             <JobList 
-              applications={filteredApplications} 
+              applications={filteredAndSortedApplications} 
               onEdit={handleEditJob}
               onDelete={handleDeleteJob}
             />
@@ -242,6 +286,14 @@ function Dashboard() {
         onApplyFilters={handleApplyFilters}
         onClearFilters={handleClearFilters}
         initialFilters={activeFilters}
+      />
+
+      <SortModal
+        isOpen={isSortModalOpen}
+        onClose={handleCloseSortModal}
+        onApplySort={handleApplySort}
+        onClearSort={handleClearSort}
+        initialSort={activeSort}
       />
 
       <DeleteJobModal

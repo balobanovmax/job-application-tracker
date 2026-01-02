@@ -1,0 +1,60 @@
+.sortSection {
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sortOptionsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sortButton {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  text-align: left;
+  font-family: inherit;
+}
+
+.sortButton:hover:not(.sortActive) {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sortActive {
+  border-color: #6366f1;
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+.sortActive:hover {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+@media (max-width: 640px) {
+  .sortOptionsGrid {
+    gap: 0.5rem;
+  }
+  
+  .sortButton {
+    padding: 0.65rem 0.875rem;
+    font-size: 0.875rem;
+  }
+}
+

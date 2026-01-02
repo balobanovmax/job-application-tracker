@@ -1,6 +1,6 @@
 import styles from './ActionButtons.module.css';
 
-function ActionButtons({ onAddJob, onFilters, onViewStatistics, onDeleteAll, filterCount = 0 }) {
+function ActionButtons({ onAddJob, onFilters, onSort, onViewStatistics, onDeleteAll, filterCount = 0, sortCount = 0 }) {
   return (
     <div className={styles.actionButtons}>
       <button onClick={onAddJob} className={styles.primaryButton}>
@@ -10,6 +10,12 @@ function ActionButtons({ onAddJob, onFilters, onViewStatistics, onDeleteAll, fil
         Filters
         {filterCount > 0 && (
           <span className={styles.filterBadge}>{filterCount}</span>
+        )}
+      </button>
+      <button onClick={onSort} className={styles.secondaryButton}>
+        Sort
+        {sortCount > 0 && (
+          <span className={styles.filterBadge}>{sortCount}</span>
         )}
       </button>
       <button onClick={onViewStatistics} className={styles.secondaryButton}>
