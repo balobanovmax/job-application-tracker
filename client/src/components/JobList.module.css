@@ -15,12 +15,40 @@
   border-radius: 0.75rem;
   padding: 1.5rem;
   transition: all 0.2s;
+  position: relative;
 }
 
 .jobCard:hover {
   background-color: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-1px);
+}
+
+.jobCard.selectable {
+  cursor: pointer;
+}
+
+.jobCard.selectable:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.jobCard.selected {
+  background-color: rgba(99, 102, 241, 0.1);
+  border-color: #6366f1;
+}
+
+.checkbox {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 10;
+}
+
+.checkboxInput {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: #6366f1;
 }
 
 .jobHeader {

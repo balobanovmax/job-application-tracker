@@ -8,17 +8,21 @@ function FunnelChart({ data }) {
 
     const total = data.reduce((sum, item) => sum + item.value, 0);
     
+    // Find the max value to use as reference for proportional widths
+    const maxValue = Math.max(...data.map(item => item.value));
+    
     return data.map((item) => {
       const percentage = total > 0 ? (item.value / total) * 100 : 0;
-      // Calculate width as percentage of total (minimum 20%, maximum 100%)
-      const widthPercentage = total > 0 ? (item.value / total) * 100 : 0;
-      const width = Math.max(20, Math.min(100, widthPercentage));
+      
+      // Calculate width proportional to the max value (so largest = 100%)
+      // This ensures true proportional representation
+      const widthPercentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
       
       return {
         ...item,
         percentage: percentage.toFixed(1),
         displayPercentage: percentage.toFixed(1),
-        width: width
+        width: widthPercentage // True proportional width
       };
     });
   }, [data]);

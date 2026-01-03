@@ -1,6 +1,39 @@
 import styles from './ActionButtons.module.css';
 
-function ActionButtons({ onAddJob, onFilters, onSort, onViewStatistics, onDeleteAll, filterCount = 0, sortCount = 0 }) {
+function ActionButtons({ 
+  onAddJob, 
+  onFilters, 
+  onSort, 
+  onViewStatistics, 
+  onDeleteAll, 
+  onSelectMultiple,
+  filterCount = 0, 
+  sortCount = 0,
+  isSelectionMode = false,
+  selectedCount = 0,
+  onCancelSelection,
+  onBulkOperation
+}) {
+  if (isSelectionMode) {
+    return (
+      <div className={styles.actionButtons}>
+        <div className={styles.selectionInfo}>
+          <span className={styles.selectionText}>{selectedCount} job{selectedCount !== 1 ? 's' : ''} selected</span>
+        </div>
+        <button onClick={onCancelSelection} className={styles.cancelButton}>
+          Cancel
+        </button>
+        <button 
+          onClick={onBulkOperation} 
+          className={styles.bulkOperationButton}
+          disabled={selectedCount === 0}
+        >
+          Select Operation
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.actionButtons}>
       <button onClick={onAddJob} className={styles.primaryButton}>
@@ -17,6 +50,9 @@ function ActionButtons({ onAddJob, onFilters, onSort, onViewStatistics, onDelete
         {sortCount > 0 && (
           <span className={styles.filterBadge}>{sortCount}</span>
         )}
+      </button>
+      <button onClick={onSelectMultiple} className={styles.secondaryButton}>
+        Select Multiple
       </button>
       <button onClick={onViewStatistics} className={styles.secondaryButton}>
         View Statistics

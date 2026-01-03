@@ -1,10 +1,13 @@
 .dashboard {
   min-height: 100vh;
   background-color: #0f0f0f;
+  display: flex;
+  flex-direction: column;
 }
 
 .main {
   padding: 3rem 2rem;
+  flex: 1;
 }
 
 .container {
@@ -43,6 +46,20 @@
   font-size: 1.125rem;
   color: #ef4444;
   margin-top: 2rem;
+}
+
+.footer {
+  padding: 2rem 1rem;
+  background-color: #1a1a1a;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.copyright {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0;
 }
 
 @media (max-width: 768px) {

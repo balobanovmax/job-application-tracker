@@ -6,6 +6,23 @@
   min-height: 300px;
 }
 
+.yAxisContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.yAxisTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
 .yAxisLabel {
   display: flex;
   flex-direction: column;
@@ -15,6 +32,7 @@
   padding-right: 0.75rem;
   padding-top: 0.5rem;
   padding-bottom: 2.5rem;
+  flex: 1;
 }
 
 .yAxisLabel span {
@@ -101,7 +119,7 @@
 
 .xLabel {
   font-size: 0.6875rem;
-  color: #94a3b8;
+  color: #ffffff;
   text-align: center;
   margin-top: 0.5rem;
   white-space: nowrap;
@@ -110,6 +128,16 @@
   max-width: 60px;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.xAxisTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  margin-top: 2rem;
+  letter-spacing: 0.5px;
 }
 
 .emptyState {

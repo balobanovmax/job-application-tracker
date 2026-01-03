@@ -134,27 +134,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#fafafa',
   },
   colCompany: {
-    width: '30%',
+    width: '35%',
     fontSize: 10,
   },
   colRole: {
-    width: '30%',
+    width: '35%',
     fontSize: 10,
   },
   colStatus: {
-    width: '20%',
+    width: '18%',
     fontSize: 9,
     color: '#1a1a1a',
   },
   colDate: {
     width: '12%',
     fontSize: 9,
-  },
-  colDays: {
-    width: '8%',
-    fontSize: 9,
-    textAlign: 'right',
-    color: '#1a1a1a',
   },
   statusBadge: {
     padding: '3 6',
@@ -265,13 +259,6 @@ function JobApplicationPDF({ userName, applications }) {
     new Date(b.date_applied) - new Date(a.date_applied)
   );
 
-  // Calculate days since application
-  const today = new Date();
-  const appsWithDays = sortedApplications.map(app => ({
-    ...app,
-    daysSince: Math.floor((today - new Date(app.date_applied)) / (1000 * 60 * 60 * 24))
-  }));
-
   // Company breakdown
   const companyCount = {};
   applications.forEach(app => {
@@ -369,9 +356,8 @@ function JobApplicationPDF({ userName, applications }) {
             <Text style={styles.colRole}>Role</Text>
             <Text style={styles.colStatus}>Status</Text>
             <Text style={styles.colDate}>Date Applied</Text>
-            <Text style={styles.colDays}>Days Ago</Text>
           </View>
-          {appsWithDays.map((app, index) => (
+          {sortedApplications.map((app, index) => (
             <View key={app.id} style={[styles.tableRow, index % 2 === 1 && styles.tableRowAlt]}>
               <Text style={styles.colCompany}>{app.company}</Text>
               <Text style={styles.colRole}>{app.role}</Text>
@@ -381,7 +367,6 @@ function JobApplicationPDF({ userName, applications }) {
               <Text style={styles.colDate}>
                 {new Date(app.date_applied).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </Text>
-              <Text style={styles.colDays}>{app.daysSince}</Text>
             </View>
           ))}
         </View>

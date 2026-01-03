@@ -1,16 +1,19 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useState } from 'react'
 import styles from './Navbar.module.css'
 
 function Navbar() {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
   const navigate = useNavigate()
   const location = useLocation()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogin = () => {
     loginWithRedirect({
       appState: { returnTo: '/dashboard' }
     })
+    setIsMobileMenuOpen(false)
   }
 
   const handleSignup = () => {
@@ -21,14 +24,21 @@ function Navbar() {
       },
       appState: { returnTo: '/dashboard' }
     })
+    setIsMobileMenuOpen(false)
   }
 
   const handleLogout = () => {
     logout({ logoutParams: { returnTo: window.location.origin } })
+    setIsMobileMenuOpen(false)
   }
 
   const handleBackToDashboard = () => {
     navigate('/dashboard')
+    setIsMobileMenuOpen(false)
+  }
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
   // Check if we're on the statistics page
@@ -39,6 +49,18 @@ function Navbar() {
       <div className={styles.container}>
         <h1 className={styles.logo}>Job Application Tracker</h1>
         
+        {/* Hamburger Icon for Mobile */}
+        <button 
+          className={styles.hamburger}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+        >
+          <span className={styles.hamburgerLine}></span>
+          <span className={styles.hamburgerLine}></span>
+          <span className={styles.hamburgerLine}></span>
+        </button>
+
+        {/* Desktop Buttons */}
         <div className={styles.buttons}>
           {isAuthenticated ? (
             <>
@@ -62,6 +84,33 @@ function Navbar() {
             </>
           )}
         </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className={styles.mobileMenu}>
+            {isAuthenticated ? (
+              <>
+                {isOnStatisticsPage && (
+                  <button onClick={handleBackToDashboard} className={styles.mobileMenuItem}>
+                    Back to Dashboard
+                  </button>
+                )}
+                <button onClick={handleLogout} className={styles.mobileMenuItem}>
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={handleLogin} className={styles.mobileMenuItem}>
+                  Login
+                </button>
+                <button onClick={handleSignup} className={styles.mobileMenuItem}>
+                  Sign Up
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </nav>
   )

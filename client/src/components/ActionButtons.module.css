@@ -86,6 +86,64 @@
   transform: translateY(0);
 }
 
+.selectionInfo {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: rgba(99, 102, 241, 0.1);
+  border: 1px solid #6366f1;
+  border-radius: 0.5rem;
+}
+
+.selectionText {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #6366f1;
+}
+
+.cancelButton {
+  background-color: transparent;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: inherit;
+}
+
+.cancelButton:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.bulkOperationButton {
+  background-color: #6366f1;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+}
+
+.bulkOperationButton:hover:not(:disabled) {
+  background-color: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.bulkOperationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 @media (max-width: 640px) {
   .actionButtons {
     flex-direction: column;

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styles from './LineChart.module.css';
 
-function LineChart({ data }) {
+function LineChart({ data, unit = 'days' }) {
   // Calculate chart dimensions and scaling
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return null;
@@ -27,11 +27,14 @@ function LineChart({ data }) {
 
   return (
     <div className={styles.chartContainer}>
-      {/* Y-axis label */}
-      <div className={styles.yAxisLabel}>
-        <span>{chartData.maxValue}</span>
-        <span>{Math.floor(chartData.maxValue / 2)}</span>
-        <span>0</span>
+      {/* Y-axis with label */}
+      <div className={styles.yAxisContainer}>
+        <div className={styles.yAxisTitle}># of Applications</div>
+        <div className={styles.yAxisLabel}>
+          <span>{chartData.maxValue}</span>
+          <span>{Math.floor(chartData.maxValue / 2)}</span>
+          <span>0</span>
+        </div>
       </div>
 
       {/* Bar chart */}
@@ -56,6 +59,8 @@ function LineChart({ data }) {
             </div>
           ))}
         </div>
+        {/* X-axis label */}
+        <div className={styles.xAxisTitle}>Timeline ({unit})</div>
       </div>
     </div>
   );

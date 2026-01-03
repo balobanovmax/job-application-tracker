@@ -11,6 +11,7 @@ import SortModal from '../components/SortModal'
 import DeleteJobModal from '../components/DeleteJobModal'
 import DeleteAllJobsModal from '../components/DeleteAllJobsModal'
 import DuplicateWarningModal from '../components/DuplicateWarningModal'
+import BulkOperationModal from '../components/BulkOperationModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { applicationAPI } from '../utils/api'
@@ -28,6 +29,9 @@ function Dashboard() {
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
   const [isSortModalOpen, setIsSortModalOpen] = useState(false)
   const [isDuplicateWarningOpen, setIsDuplicateWarningOpen] = useState(false)
+  const [isBulkOperationModalOpen, setIsBulkOperationModalOpen] = useState(false)
+  const [isSelectionMode, setIsSelectionMode] = useState(false)
+  const [selectedJobs, setSelectedJobs] = useState([])
   const [selectedJob, setSelectedJob] = useState(null)
   const [pendingJobData, setPendingJobData] = useState(null)
   const [duplicateInfo, setDuplicateInfo] = useState(null)
@@ -185,6 +189,56 @@ function Dashboard() {
     setIsSortModalOpen(false)
   }
 
+  // Bulk selection handlers
+  const handleSelectMultiple = () => {
+    setIsSelectionMode(true)
+    setSelectedJobs([])
+  }
+
+  const handleCancelSelection = () => {
+    setIsSelectionMode(false)
+    setSelectedJobs([])
+  }
+
+  const handleToggleSelection = (jobId) => {
+    setSelectedJobs(prev => {
+      if (prev.includes(jobId)) {
+        return prev.filter(id => id !== jobId)
+      } else {
+        return [...prev, jobId]
+      }
+    })
+  }
+
+  const handleBulkOperation = () => {
+    setIsBulkOperationModalOpen(true)
+  }
+
+  const handleCloseBulkOperationModal = () => {
+    setIsBulkOperationModalOpen(false)
+  }
+
+  const handleConfirmBulkOperation = async (operation, newStatus) => {
+    if (operation === 'delete') {
+      // Delete all selected jobs
+      await Promise.all(
+        selectedJobs.map(jobId => applicationAPI.delete(getAccessTokenSilently, jobId))
+      )
+    } else if (operation === 'changeStatus') {
+      // Update status for all selected jobs
+      await Promise.all(
+        selectedJobs.map(jobId => 
+          applicationAPI.update(getAccessTokenSilently, jobId, { status: newStatus })
+        )
+      )
+    }
+    
+    await refetch()
+    setIsSelectionMode(false)
+    setSelectedJobs([])
+    setIsBulkOperationModalOpen(false)
+  }
+
   // Calculate sort count (0 or 1)
   const sortCount = activeSort ? 1 : 0
 
@@ -279,7 +333,7 @@ function Dashboard() {
         <div className={styles.container}>
           <div className={styles.header}>
             <h1 className={styles.welcome}>
-              Welcome back, {auth0User?.name || auth0User?.email}!
+              Welcome, {auth0User?.name || auth0User?.email}!
             </h1>
             <p className={styles.subtitle}>
               Manage your job applications and track your progress.
@@ -290,10 +344,15 @@ function Dashboard() {
             onAddJob={handleAddJob}
             onFilters={handleFilters}
             onSort={handleSort}
+            onSelectMultiple={handleSelectMultiple}
             onViewStatistics={() => navigate('/statistics')}
             onDeleteAll={handleDeleteAllJobs}
             filterCount={activeFilterCount}
             sortCount={sortCount}
+            isSelectionMode={isSelectionMode}
+            selectedCount={selectedJobs.length}
+            onCancelSelection={handleCancelSelection}
+            onBulkOperation={handleBulkOperation}
           />
 
           {appsLoading ? (
@@ -305,10 +364,19 @@ function Dashboard() {
               applications={filteredAndSortedApplications} 
               onEdit={handleEditJob}
               onDelete={handleDeleteJob}
+              isSelectionMode={isSelectionMode}
+              selectedJobs={selectedJobs}
+              onToggleSelection={handleToggleSelection}
             />
           )}
         </div>
       </main>
+
+      <footer className={styles.footer}>
+        <p className={styles.copyright}>
+          © {new Date().getFullYear()} Maxim Balobanov. All rights reserved.
+        </p>
+      </footer>
 
       <AddJobModal
         isOpen={isAddModalOpen}
@@ -358,6 +426,13 @@ function Dashboard() {
         onClose={handleCloseDuplicateWarning}
         onConfirm={handleConfirmDuplicate}
         duplicateInfo={duplicateInfo}
+      />
+
+      <BulkOperationModal
+        isOpen={isBulkOperationModalOpen}
+        onClose={handleCloseBulkOperationModal}
+        onConfirm={handleConfirmBulkOperation}
+        selectedCount={selectedJobs.length}
       />
     </div>
   )

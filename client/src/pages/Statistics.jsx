@@ -36,7 +36,7 @@ function Statistics() {
   ]
 
   const timeSeriesData = useMemo(() => {
-    if (applications.length === 0) return [];
+    if (applications.length === 0) return { data: [], unit: 'days' };
 
     // Sort applications by date_applied
     const sortedApps = [...applications].sort((a, b) => 
@@ -79,7 +79,7 @@ function Statistics() {
         currentDate.setDate(currentDate.getDate() + 1);
       }
 
-      return result;
+      return { data: result, unit: 'days' };
     } else {
       // Group by week
       const getWeekKey = (dateStr) => {
@@ -126,7 +126,7 @@ function Statistics() {
         currentWeek.setDate(currentWeek.getDate() + 7);
       }
 
-      return result;
+      return { data: result, unit: 'weeks' };
     }
   }, [applications])
 
@@ -350,13 +350,19 @@ function Statistics() {
 
                 <div className={styles.visualizationCard}>
                   <h3 className={styles.visualizationTitle}>Applications Over Time</h3>
-                  <LineChart data={timeSeriesData} />
+                  <LineChart data={timeSeriesData.data} unit={timeSeriesData.unit} />
                 </div>
               </section>
             </>
           )}
         </div>
       </main>
+
+      <footer className={styles.footer}>
+        <p className={styles.copyright}>
+          © {new Date().getFullYear()} Maxim Balobanov. All rights reserved.
+        </p>
+      </footer>
     </div>
   )
 }

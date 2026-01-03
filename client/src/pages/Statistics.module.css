@@ -1,10 +1,13 @@
 .statistics {
   min-height: 100vh;
   background-color: #0f0f0f;
+  display: flex;
+  flex-direction: column;
 }
 
 .main {
   padding: 2rem 1rem;
+  flex: 1;
 }
 
 .container {
@@ -14,6 +17,7 @@
 
 .header {
   margin-bottom: 3rem;
+  text-align: center;
 }
 
 .headerContent {
@@ -40,6 +44,44 @@
   font-size: 1.125rem;
   color: #cbd5e1;
   margin: 0;
+}
+
+/* Mobile Styles for Statistics Header */
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .headerText {
+    text-align: center;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .exportButton,
+  .exportDropdownContainer {
+    width: 100%;
+  }
+
+  .exportButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .exportDropdownMenu {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
 }
 
 .exportButton {
@@ -369,4 +411,18 @@
   .visualizationCard {
     padding: 1rem;
   }
+}
+
+.footer {
+  padding: 2rem 1rem;
+  background-color: #1a1a1a;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.copyright {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  margin: 0;
 }
