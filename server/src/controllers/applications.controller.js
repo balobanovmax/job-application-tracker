@@ -65,7 +65,7 @@ const getApplicationById = async (req, res, next) => {
 const createApplication = async (req, res, next) => {
   try {
     const authSub = req.auth.payload.sub;
-    const { company, role, status, date_applied, notes, application_url } = req.body;
+    const { company, role, status, date_applied, notes, application_url, starred } = req.body;
 
     if (!company || !role) {
       return res.status(400).json({
@@ -98,7 +98,8 @@ const createApplication = async (req, res, next) => {
       status,
       date_applied,
       notes,
-      application_url
+      application_url,
+      starred
     );
 
     res.status(201).json({
@@ -114,7 +115,7 @@ const updateApplication = async (req, res, next) => {
   try {
     const authSub = req.auth.payload.sub;
     const { id } = req.params;
-    const { company, role, status, date_applied, notes, application_url } = req.body;
+    const { company, role, status, date_applied, notes, application_url, starred } = req.body;
 
     const user = await db.findOrCreateUser(authSub);
     const existingApp = await db.getApplicationById(id, user.id);
@@ -149,6 +150,7 @@ const updateApplication = async (req, res, next) => {
     if (date_applied !== undefined) updates.date_applied = date_applied;
     if (notes !== undefined) updates.notes = notes;
     if (application_url !== undefined) updates.application_url = application_url;
+    if (starred !== undefined) updates.starred = starred;
 
     const application = await db.updateApplication(id, user.id, updates);
 

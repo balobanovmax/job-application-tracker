@@ -30,11 +30,6 @@ function LineChart({ data, unit = 'days' }) {
       {/* Y-axis with label */}
       <div className={styles.yAxisContainer}>
         <div className={styles.yAxisTitle}># of Applications</div>
-        <div className={styles.yAxisLabel}>
-          <span>{chartData.maxValue}</span>
-          <span>{Math.floor(chartData.maxValue / 2)}</span>
-          <span>0</span>
-        </div>
       </div>
 
       {/* Bar chart */}

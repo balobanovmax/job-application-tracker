@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function JobApplicationPDF({ userName, applications }) {
+function JobApplicationPDF({ userName, applications, includeTimeline = false, timelineData = null }) {
   // Calculate statistics
   const totalApplications = applications.length;
   const appliedCount = applications.filter(app => app.status === 'applied').length;
@@ -302,8 +302,8 @@ function JobApplicationPDF({ userName, applications }) {
           </Text>
         </View>
 
-        {/* Executive Summary */}
-        <Text style={styles.sectionTitle}>Executive Summary</Text>
+        {/* Summary */}
+        <Text style={styles.sectionTitle}>Summary</Text>
         <View style={styles.summaryGrid}>
           <View style={styles.summaryCard}>
             <Text style={styles.summaryLabel}>Total Applications</Text>
@@ -370,6 +370,31 @@ function JobApplicationPDF({ userName, applications }) {
             </View>
           ))}
         </View>
+
+        {/* Applications Over Time (if included) */}
+        {includeTimeline && timelineData && timelineData.data && timelineData.data.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Applications Over Time ({timelineData.unit})</Text>
+            <View style={{ marginBottom: 15 }}>
+              {timelineData.data.map((item, index) => (
+                <View key={index} style={{ 
+                  flexDirection: 'row', 
+                  justifyContent: 'space-between',
+                  padding: '5 10',
+                  backgroundColor: index % 2 === 0 ? '#fafafa' : '#ffffff',
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#f3f4f6',
+                  borderBottomStyle: 'solid'
+                }}>
+                  <Text style={{ fontSize: 10, color: '#333333', width: '50%' }}>{item.label}</Text>
+                  <Text style={{ fontSize: 10, color: '#6366f1', fontWeight: 'bold', width: '50%', textAlign: 'right' }}>
+                    {item.value} application{item.value !== 1 ? 's' : ''}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
 
         {/* Company Breakdown */}
         <Text style={styles.sectionTitle}>Company Breakdown</Text>

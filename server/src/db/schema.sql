@@ -18,6 +18,7 @@ CREATE TABLE applications (
     date_applied DATE DEFAULT CURRENT_DATE,
     notes TEXT CHECK (notes IS NULL OR LENGTH(notes) <= 50),
     application_url TEXT,
+    starred BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW()
 );
 

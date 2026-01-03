@@ -1,6 +1,6 @@
 import styles from './JobList.module.css';
 
-function JobList({ applications, onEdit, onDelete, isSelectionMode = false, selectedJobs = [], onToggleSelection }) {
+function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode = false, selectedJobs = [], onToggleSelection }) {
   // Helper function to format status display text
   const formatStatus = (status) => {
     if (status === 'applied') {
@@ -47,6 +47,13 @@ function JobList({ applications, onEdit, onDelete, isSelectionMode = false, sele
                   />
                 </div>
               )}
+
+              {/* Star icon in bottom-left corner */}
+              {app.starred && (
+                <div className={styles.starIcon}>
+                  ★
+                </div>
+              )}
               
               <div className={styles.jobHeader}>
                 <h3 className={styles.company}>{app.company}</h3>
@@ -77,6 +84,16 @@ function JobList({ applications, onEdit, onDelete, isSelectionMode = false, sele
                 </p>
                 {!isSelectionMode && (
                   <div className={styles.buttonGroup}>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleStar(app.id, !app.starred);
+                      }} 
+                      className={app.starred ? styles.unstarButton : styles.starButton}
+                      aria-label={app.starred ? "Unstar job" : "Star job"}
+                    >
+                      {app.starred ? 'Unstar' : 'Star'}
+                    </button>
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();

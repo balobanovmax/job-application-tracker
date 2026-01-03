@@ -74,19 +74,19 @@ const getApplicationByDateApplied = async (dateApplied, userId) => {
   return result.rows[0];
 };
 
-const createApplication = async (userId, company, role, status, dateApplied, notes, applicationUrl) => {
+const createApplication = async (userId, company, role, status, dateApplied, notes, applicationUrl, starred) => {
   const result = await pool.query(
-    `INSERT INTO applications (user_id, company, role, status, date_applied, notes, application_url) 
-     VALUES ($1, $2, $3, $4, $5, $6, $7) 
+    `INSERT INTO applications (user_id, company, role, status, date_applied, notes, application_url, starred) 
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
      RETURNING *`,
-    [userId, company, role, status || 'applied', dateApplied || new Date(), notes || null, applicationUrl || null]
+    [userId, company, role, status || 'applied', dateApplied || new Date(), notes || null, applicationUrl || null, starred || false]
   );
   return result.rows[0];
 };
 
 
 const updateApplication = async (applicationId, userId, updates) => {
-  const { company, role, status, date_applied, notes, application_url } = updates;
+  const { company, role, status, date_applied, notes, application_url, starred } = updates;
   
   const result = await pool.query(
     `UPDATE applications 
@@ -95,10 +95,11 @@ const updateApplication = async (applicationId, userId, updates) => {
          status = COALESCE($3, status),
          date_applied = COALESCE($4, date_applied),
          notes = COALESCE($5, notes),
-         application_url = COALESCE($6, application_url)
-     WHERE id = $7 AND user_id = $8
+         application_url = COALESCE($6, application_url),
+         starred = CASE WHEN $7::boolean IS NULL THEN starred ELSE $7::boolean END
+     WHERE id = $8 AND user_id = $9
      RETURNING *`,
-    [company, role, status, date_applied, notes, application_url, applicationId, userId]
+    [company, role, status, date_applied, notes, application_url, starred, applicationId, userId]
   );
   return result.rows[0];
 };

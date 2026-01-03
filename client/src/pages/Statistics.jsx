@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar'
 import FunnelChart from '../components/FunnelChart'
 import LineChart from '../components/LineChart'
 import JobApplicationPDF from '../components/JobApplicationPDF'
+import PDFExportOptionsModal from '../components/PDFExportOptionsModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { exportJobApplicationsCSV } from '../utils/csvExport'
@@ -13,6 +14,7 @@ function Statistics() {
   const { auth0User, loading: userLoading, error: userError } = useUser()
   const { applications, loading: appsLoading, error: appsError } = useApplications()
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false)
+  const [isPDFOptionsModalOpen, setIsPDFOptionsModalOpen] = useState(false)
 
   // Calculate statistics
   const totalApplications = applications.length
@@ -130,19 +132,132 @@ function Statistics() {
     }
   }, [applications])
 
-  // Handle PDF export
-  const handleExportPDF = async () => {
+  // Handle PDF export - open options modal
+  const handleExportPDF = () => {
     setIsExportDropdownOpen(false) // Close dropdown
+    setIsPDFOptionsModalOpen(true) // Open options modal
+  }
+
+  const handleClosePDFOptionsModal = () => {
+    setIsPDFOptionsModalOpen(false)
+  }
+
+  const handleConfirmPDFExport = async (options) => {
     try {
-      console.log('Starting PDF generation...');
-      console.log('Applications:', applications);
-      console.log('User:', auth0User);
+      console.log('Starting PDF generation with options:', options);
       
       const userName = auth0User?.name || auth0User?.email || 'User';
       
+      // Filter applications based on date range
+      let filteredApps = [...applications];
+      
+      // Apply date range filter
+      if (options.dateFrom) {
+        const fromDate = new Date(options.dateFrom);
+        fromDate.setHours(0, 0, 0, 0);
+        filteredApps = filteredApps.filter(app => new Date(app.date_applied) >= fromDate);
+      }
+      
+      if (options.dateTo) {
+        const toDate = new Date(options.dateTo);
+        toDate.setHours(23, 59, 59, 999);
+        filteredApps = filteredApps.filter(app => new Date(app.date_applied) <= toDate);
+      }
+      
+      console.log('Filtered applications:', filteredApps.length, 'of', applications.length);
+      
+      // Calculate timeline data for filtered applications if needed
+      let filteredTimelineData = null;
+      if (options.includeTimeline && filteredApps.length > 0) {
+        // Sort applications by date_applied
+        const sortedApps = [...filteredApps].sort((a, b) => 
+          new Date(a.date_applied) - new Date(b.date_applied)
+        );
+
+        const firstDate = new Date(sortedApps[0].date_applied);
+        const lastDate = new Date(sortedApps[sortedApps.length - 1].date_applied);
+        
+        firstDate.setHours(0, 0, 0, 0);
+        lastDate.setHours(0, 0, 0, 0);
+        
+        const daysDiff = Math.ceil((lastDate - firstDate) / (1000 * 60 * 60 * 24));
+        const useDaily = daysDiff < 28;
+
+        if (useDaily) {
+          // Group by day
+          const grouped = {};
+          sortedApps.forEach(app => {
+            const date = new Date(app.date_applied);
+            date.setHours(0, 0, 0, 0);
+            const key = date.toISOString().split('T')[0];
+            grouped[key] = (grouped[key] || 0) + 1;
+          });
+
+          const result = [];
+          const currentDate = new Date(firstDate);
+          
+          while (currentDate <= lastDate) {
+            const key = currentDate.toISOString().split('T')[0];
+            result.push({
+              label: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+              value: grouped[key] || 0,
+            });
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+          
+          filteredTimelineData = { data: result, unit: 'days' };
+        } else {
+          // Group by week
+          const getWeekKey = (date) => {
+            const d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            const day = d.getDay();
+            const diff = d.getDate() - day;
+            const weekStart = new Date(d.setDate(diff));
+            return weekStart.toISOString().split('T')[0];
+          };
+
+          const grouped = {};
+          sortedApps.forEach(app => {
+            const key = getWeekKey(app.date_applied);
+            grouped[key] = (grouped[key] || 0) + 1;
+          });
+
+          const result = [];
+          const currentWeekStart = new Date(firstDate);
+          currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+          
+          const lastWeekStart = new Date(lastDate);
+          lastWeekStart.setDate(lastWeekStart.getDate() - lastWeekStart.getDay());
+          
+          while (currentWeekStart <= lastWeekStart) {
+            const key = currentWeekStart.toISOString().split('T')[0];
+            const weekEnd = new Date(currentWeekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            
+            const label = `${currentWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}-${weekEnd.getDate()}`;
+            
+            result.push({
+              label,
+              value: grouped[key] || 0,
+            });
+            
+            currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+          }
+          
+          filteredTimelineData = { data: result, unit: 'weeks' };
+        }
+      }
+      
       console.log('Creating PDF blob...');
       const blob = await pdf(
-        <JobApplicationPDF userName={userName} applications={applications} />
+        <JobApplicationPDF 
+          userName={userName} 
+          applications={filteredApps}
+          includeTimeline={options.includeTimeline}
+          timelineData={filteredTimelineData?.data}
+          timelineUnit={filteredTimelineData?.unit}
+        />
       ).toBlob();
       
       console.log('PDF blob created successfully');
@@ -363,6 +478,12 @@ function Statistics() {
           © {new Date().getFullYear()} Maxim Balobanov. All rights reserved.
         </p>
       </footer>
+
+      <PDFExportOptionsModal
+        isOpen={isPDFOptionsModalOpen}
+        onClose={handleClosePDFOptionsModal}
+        onConfirm={handleConfirmPDFExport}
+      />
     </div>
   )
 }

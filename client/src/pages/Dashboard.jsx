@@ -19,7 +19,7 @@ import styles from './Dashboard.module.css'
 
 function Dashboard() {
   const { auth0User, loading: userLoading, error: userError } = useUser()
-  const { applications, loading: appsLoading, error: appsError, refetch } = useApplications()
+  const { applications, loading: appsLoading, error: appsError, refetch, updateApplicationOptimistic } = useApplications()
   const { getAccessTokenSilently } = useAuth0()
   const navigate = useNavigate()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -40,6 +40,7 @@ function Dashboard() {
     dateTo: '',
     statuses: [],
     companySearch: '',
+    starred: 'all',
   })
   const [activeSort, setActiveSort] = useState('')
 
@@ -114,6 +115,7 @@ function Dashboard() {
       dateTo: '',
       statuses: [],
       companySearch: '',
+      starred: 'all',
     })
     setIsFiltersModalOpen(false) // Close modal after clearing
   }
@@ -125,6 +127,7 @@ function Dashboard() {
     if (activeFilters.dateTo) count++;
     count += activeFilters.statuses.length;
     if (activeFilters.companySearch.trim()) count++;
+    if (activeFilters.starred !== 'all') count++;
     return count;
   }, [activeFilters])
 
@@ -141,6 +144,21 @@ function Dashboard() {
   const handleSubmitEditJob = async (jobId, formData) => {
     await applicationAPI.update(getAccessTokenSilently, jobId, formData)
     await refetch()
+  }
+
+  const handleToggleStar = async (jobId, starred) => {
+    // Optimistic update - update UI immediately
+    updateApplicationOptimistic(jobId, { starred })
+    
+    // Then update the backend
+    try {
+      await applicationAPI.update(getAccessTokenSilently, jobId, { starred })
+    } catch (error) {
+      console.error('Failed to update star status:', error)
+      // Revert optimistic update on error
+      updateApplicationOptimistic(jobId, { starred: !starred })
+      alert('Failed to update star status. Please try again.')
+    }
   }
 
   const handleDeleteJob = (job) => {
@@ -274,6 +292,14 @@ function Dashboard() {
       );
     }
 
+    // Apply starred filter
+    if (activeFilters.starred === 'starred') {
+      filtered = filtered.filter(app => app.starred === true);
+    } else if (activeFilters.starred === 'unstarred') {
+      filtered = filtered.filter(app => app.starred === false);
+    }
+    // 'all' shows everything, no filter needed
+
     // Apply sorting
     if (activeSort) {
       switch (activeSort) {
@@ -364,6 +390,7 @@ function Dashboard() {
               applications={filteredAndSortedApplications} 
               onEdit={handleEditJob}
               onDelete={handleDeleteJob}
+              onToggleStar={handleToggleStar}
               isSelectionMode={isSelectionMode}
               selectedJobs={selectedJobs}
               onToggleSelection={handleToggleSelection}

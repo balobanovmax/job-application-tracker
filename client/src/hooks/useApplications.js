@@ -29,6 +29,15 @@ export const useApplications = () => {
     }
   }, [isAuthenticated, getAccessTokenSilently]);
 
+  // Optimistic update function for immediate UI updates
+  const updateApplicationOptimistic = useCallback((jobId, updates) => {
+    setApplications(prev => 
+      prev.map(app => 
+        app.id === jobId ? { ...app, ...updates } : app
+      )
+    );
+  }, []);
+
   useEffect(() => {
     fetchApplications();
   }, [fetchApplications]);
@@ -38,6 +47,7 @@ export const useApplications = () => {
     loading,
     error,
     refetch: fetchApplications,
+    updateApplicationOptimistic,
   };
 };
 

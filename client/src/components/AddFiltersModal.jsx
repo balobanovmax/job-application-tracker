@@ -7,6 +7,7 @@ function AddFiltersModal({ isOpen, onClose, onApplyFilters, onClearFilters, init
     dateTo: '',
     statuses: [],
     companySearch: '',
+    starred: 'all', // 'all', 'starred', 'unstarred'
   });
 
   useEffect(() => {
@@ -109,6 +110,40 @@ function AddFiltersModal({ isOpen, onClose, onApplyFilters, onClearFilters, init
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Starred Filter */}
+          <div className={styles.filterSection}>
+            <h3 className={styles.sectionTitle}>Filter by Priority</h3>
+            <div className={styles.starredGrid}>
+              <button
+                type="button"
+                onClick={() => setFilters(prev => ({ ...prev, starred: 'all' }))}
+                className={`${styles.starredButton} ${
+                  filters.starred === 'all' ? styles.starredActive : ''
+                }`}
+              >
+                All Applications
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilters(prev => ({ ...prev, starred: 'starred' }))}
+                className={`${styles.starredButton} ${
+                  filters.starred === 'starred' ? styles.starredActive : ''
+                }`}
+              >
+                Starred Only
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilters(prev => ({ ...prev, starred: 'unstarred' }))}
+                className={`${styles.starredButton} ${
+                  filters.starred === 'unstarred' ? styles.starredActive : ''
+                }`}
+              >
+                Unstarred Only
+              </button>
             </div>
           </div>
 

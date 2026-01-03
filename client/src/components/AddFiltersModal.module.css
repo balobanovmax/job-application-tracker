@@ -128,7 +128,14 @@
   gap: 0.75rem;
 }
 
-.statusButton {
+.starredGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.statusButton,
+.starredButton {
   padding: 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -138,6 +145,19 @@
   transition: all 0.2s;
   border: 2px solid transparent;
   font-family: inherit;
+}
+
+.starredButton {
+  background-color: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  text-transform: none;
+}
+
+.starredButton.starredActive {
+  background-color: #fbbf24;
+  color: #1a1a1a;
+  border-color: #fbbf24;
+  font-weight: 600;
 }
 
 .statusButton.applied {
