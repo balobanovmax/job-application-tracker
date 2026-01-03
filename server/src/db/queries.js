@@ -27,7 +27,7 @@ const findOrCreateUser = async (auth0Id, email) => {
 
 const getApplicationsByUserId = async (userId) => {
   const result = await pool.query(
-    'SELECT * FROM applications WHERE user_id = $1 ORDER BY date_applied DESC, created_at DESC',
+    'SELECT * FROM applications WHERE user_id = $1 ORDER BY created_at DESC',
     [userId]
   );
   return result.rows;
