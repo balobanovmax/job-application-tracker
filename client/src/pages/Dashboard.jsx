@@ -3,6 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import JobList from '../components/JobList'
+import KanbanBoard from '../components/KanbanBoard'
 import ActionButtons from '../components/ActionButtons'
 import AddJobModal from '../components/AddJobModal'
 import EditJobModal from '../components/EditJobModal'
@@ -48,7 +49,8 @@ function Dashboard() {
   })
   const [activeSort, setActiveSort] = useState('')
   const [viewMode, setViewMode] = useState(() => {
-    return localStorage.getItem('jobViewMode') === 'list' ? 'list' : 'tiles'
+    const saved = localStorage.getItem('jobViewMode')
+    return saved === 'list' || saved === 'kanban' ? saved : 'tiles'
   })
 
   const handleChangeViewMode = () => {
@@ -179,6 +181,24 @@ function Dashboard() {
       // Revert optimistic update on error
       updateApplicationOptimistic(jobId, { starred: !starred })
       alert('Failed to update star status. Please try again.')
+    }
+  }
+
+  const handleStatusChange = async (jobId, newStatus) => {
+    const application = applications.find((app) => app.id === jobId)
+    if (!application || application.status === newStatus) {
+      return
+    }
+
+    const previousStatus = application.status
+    updateApplicationOptimistic(jobId, { status: newStatus })
+
+    try {
+      await applicationAPI.update(getAccessTokenSilently, jobId, { status: newStatus })
+    } catch (error) {
+      console.error('Failed to update status:', error)
+      updateApplicationOptimistic(jobId, { status: previousStatus })
+      alert('Failed to update status. Please try again.')
     }
   }
 
@@ -412,6 +432,12 @@ function Dashboard() {
             <p className={styles.loadingText}>Loading your applications...</p>
           ) : appsError ? (
             <p className={styles.errorText}>Error loading applications: {appsError}</p>
+          ) : viewMode === 'kanban' ? (
+            <KanbanBoard
+              applications={filteredAndSortedApplications}
+              onEdit={handleEditJob}
+              onStatusChange={handleStatusChange}
+            />
           ) : (
             <JobList 
               applications={filteredAndSortedApplications} 

@@ -5,6 +5,7 @@ import viewModeStyles from './ViewModeModal.module.css';
 const VIEW_OPTIONS = [
   { value: 'tiles', label: 'Tile View' },
   { value: 'list', label: 'List View' },
+  { value: 'kanban', label: 'Kanban Board' },
 ];
 
 function ViewModeModal({ isOpen, onClose, onApplyViewMode, initialViewMode }) {
