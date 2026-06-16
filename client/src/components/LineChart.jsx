@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import styles from './LineChart.module.css';
 
 function LineChart({ data, unit = 'days' }) {
-  // Calculate chart dimensions and scaling
+  const chartAreaRef = useRef(null);
+
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return null;
 
@@ -16,6 +17,13 @@ function LineChart({ data, unit = 'days' }) {
       maxValue,
     };
   }, [data]);
+
+  useEffect(() => {
+    const chartArea = chartAreaRef.current;
+    if (!chartArea || !data?.length) return;
+
+    chartArea.scrollLeft = chartArea.scrollWidth;
+  }, [data, unit]);
 
   if (!data || data.length === 0) {
     return (
@@ -33,7 +41,7 @@ function LineChart({ data, unit = 'days' }) {
       </div>
 
       {/* Bar chart */}
-      <div className={styles.chartArea}>
+      <div className={styles.chartArea} ref={chartAreaRef}>
         <div className={styles.barsContainer}>
           {chartData.bars.map((bar, index) => (
             <div key={index} className={styles.barWrapper}>

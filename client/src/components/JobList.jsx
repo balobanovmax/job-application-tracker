@@ -9,6 +9,7 @@ function JobList({
   selectedJobs = [],
   onToggleSelection,
   viewMode = 'tiles',
+  emptyMessage = 'No jobs added yet. Add your first job!',
 }) {
   const formatStatus = (status) => {
     if (status === 'applied') {
@@ -62,7 +63,7 @@ function JobList({
     return (
       <div className={styles.emptyState}>
         <p className={styles.emptyMessage}>
-          No jobs added yet. Add your first job!
+          {emptyMessage}
         </p>
       </div>
     );

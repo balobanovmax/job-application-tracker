@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--color-overlay);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -14,14 +14,14 @@
 }
 
 .modalContent {
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-surface);
   border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   width: 100%;
   max-width: 550px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 25px -5px var(--color-shadow);
 }
 
 .modalHeader {
@@ -29,21 +29,21 @@
   justify-content: center;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--color-border);
   position: relative;
 }
 
 .modalTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 .closeButton {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 2rem;
   cursor: pointer;
   padding: 0;
@@ -59,8 +59,8 @@
 }
 
 .closeButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
 }
 
 .form {
@@ -78,7 +78,7 @@
 .sectionTitle {
   font-size: 1rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--color-text-secondary);
   margin-bottom: 1rem;
 }
 
@@ -96,17 +96,17 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #cbd5e1;
+  color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 }
 
 .input {
   width: 100%;
   padding: 0.75rem;
-  background-color: #0f0f0f;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--color-bg-page);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  color: #ffffff;
+  color: var(--color-text-primary);
   font-size: 1rem;
   font-family: inherit;
   transition: all 0.2s;
@@ -114,12 +114,12 @@
 
 .input:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .input::placeholder {
-  color: #6b7280;
+  color: var(--color-text-faint);
 }
 
 .statusGrid {
@@ -149,13 +149,13 @@
 
 .starredButton {
   background-color: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  color: var(--color-text-muted);
   text-transform: none;
 }
 
 .starredButton.starredActive {
   background-color: #fbbf24;
-  color: #1a1a1a;
+  color: var(--color-bg-surface);
   border-color: #fbbf24;
   font-weight: 600;
 }
@@ -177,31 +177,31 @@
 
 .statusButton.rejected {
   background-color: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  color: var(--color-danger);
 }
 
 .statusButton.statusActive.applied {
   background-color: #3b82f6;
-  color: #ffffff;
+  color: var(--color-text-primary);
   border-color: #60a5fa;
 }
 
 .statusButton.statusActive.interview {
   background-color: #a855f7;
-  color: #ffffff;
+  color: var(--color-text-primary);
   border-color: #c084fc;
 }
 
 .statusButton.statusActive.offer {
   background-color: #22c55e;
-  color: #ffffff;
+  color: var(--color-text-primary);
   border-color: #4ade80;
 }
 
 .statusButton.statusActive.rejected {
-  background-color: #ef4444;
-  color: #ffffff;
-  border-color: #f87171;
+  background-color: var(--color-danger);
+  color: var(--color-text-primary);
+  border-color: var(--color-danger);
 }
 
 .statusButton:hover {
@@ -214,7 +214,7 @@
   justify-content: center;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--color-border);
 }
 
 .clearButton,
@@ -231,22 +231,22 @@
 
 .clearButton {
   background-color: transparent;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
 }
 
 .clearButton:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
 }
 
 .applyButton {
-  background-color: #6366f1;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
 }
 
 .applyButton:hover {
-  background-color: #4f46e5;
+  background-color: var(--color-accent-hover);
   transform: translateY(-1px);
 }
 

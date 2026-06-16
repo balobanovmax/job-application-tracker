@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--color-overlay);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
@@ -14,14 +14,14 @@
 }
 
 .modalContent {
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-surface);
   border-radius: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 25px -5px var(--color-shadow);
 }
 
 .modalHeader {
@@ -29,21 +29,21 @@
   justify-content: center;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--color-border);
   position: relative;
 }
 
 .modalTitle {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 .closeButton {
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 2rem;
   cursor: pointer;
   padding: 0;
@@ -59,8 +59,8 @@
 }
 
 .closeButton:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: var(--color-border);
+  color: var(--color-text-primary);
 }
 
 .closeButton:disabled {
@@ -80,7 +80,7 @@
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #cbd5e1;
+  color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -88,10 +88,10 @@
 .select {
   width: 100%;
   padding: 0.75rem;
-  background-color: #0f0f0f;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--color-bg-input);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  color: #ffffff;
+  color: var(--color-text-primary);
   font-size: 1rem;
   font-family: inherit;
   transition: all 0.2s;
@@ -109,12 +109,12 @@
 .input:focus,
 .select:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .input::placeholder {
-  color: #6b7280;
+  color: var(--color-text-faint);
 }
 
 .input:disabled,
@@ -130,7 +130,7 @@
 .error {
   background-color: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #f87171;
+  color: var(--color-danger);
   padding: 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -139,13 +139,13 @@
 
 .optional {
   font-weight: 400;
-  color: #6b7280;
+  color: var(--color-text-faint);
   font-size: 0.8125rem;
 }
 
 .charCounter {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-faint);
   text-align: right;
   margin-top: 0.25rem;
 }
@@ -171,22 +171,22 @@
 
 .cancelButton {
   background-color: transparent;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
 }
 
 .cancelButton:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
 }
 
 .submitButton {
-  background-color: #6366f1;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: #4f46e5;
+  background-color: var(--color-accent-hover);
 }
 
 .cancelButton:disabled,

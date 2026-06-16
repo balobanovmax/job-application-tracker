@@ -112,7 +112,7 @@ function KanbanColumn({ column, applications, onEdit }) {
   );
 }
 
-function KanbanBoard({ applications, onEdit, onStatusChange }) {
+function KanbanBoard({ applications, onEdit, onStatusChange, emptyMessage = 'No jobs added yet. Add your first job!' }) {
   const [activeId, setActiveId] = useState(null);
 
   const sensors = useSensors(
@@ -157,7 +157,7 @@ function KanbanBoard({ applications, onEdit, onStatusChange }) {
     return (
       <div className={styles.emptyState}>
         <p className={styles.emptyMessage}>
-          No jobs added yet. Add your first job!
+          {emptyMessage}
         </p>
       </div>
     );

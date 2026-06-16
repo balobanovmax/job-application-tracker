@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { getLocalDateString } from '../utils/applicationTimeline';
 import styles from './AddJobModal.module.css';
 
 function AddJobModal({ isOpen, onClose, onSubmit }) {
@@ -6,7 +7,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
     company: '',
     role: '',
     status: 'applied',
-    date_applied: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+    date_applied: getLocalDateString(),
     notes: '',
     application_url: '',
   });
@@ -55,7 +56,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
           company: '',
           role: '',
           status: 'applied',
-          date_applied: new Date().toISOString().split('T')[0],
+          date_applied: getLocalDateString(),
           notes: '',
           application_url: '',
         });
@@ -74,7 +75,7 @@ function AddJobModal({ isOpen, onClose, onSubmit }) {
         company: '',
         role: '',
         status: 'applied',
-        date_applied: new Date().toISOString().split('T')[0],
+        date_applied: getLocalDateString(),
         notes: '',
         application_url: '',
       });

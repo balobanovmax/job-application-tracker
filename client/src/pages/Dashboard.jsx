@@ -14,6 +14,7 @@ import DeleteJobModal from '../components/DeleteJobModal'
 import DeleteAllJobsModal from '../components/DeleteAllJobsModal'
 import DuplicateWarningModal from '../components/DuplicateWarningModal'
 import BulkOperationModal from '../components/BulkOperationModal'
+import SearchBar from '../components/SearchBar'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { applicationAPI } from '../utils/api'
@@ -44,9 +45,9 @@ function Dashboard() {
     dateFrom: '',
     dateTo: '',
     statuses: [],
-    companySearch: '',
     starred: 'all',
   })
+  const [globalSearch, setGlobalSearch] = useState('')
   const [activeSort, setActiveSort] = useState('')
   const [viewMode, setViewMode] = useState(() => {
     const saved = localStorage.getItem('jobViewMode')
@@ -137,7 +138,6 @@ function Dashboard() {
       dateFrom: '',
       dateTo: '',
       statuses: [],
-      companySearch: '',
       starred: 'all',
     })
     setIsFiltersModalOpen(false) // Close modal after clearing
@@ -149,7 +149,6 @@ function Dashboard() {
     if (activeFilters.dateFrom) count++;
     if (activeFilters.dateTo) count++;
     count += activeFilters.statuses.length;
-    if (activeFilters.companySearch.trim()) count++;
     if (activeFilters.starred !== 'all') count++;
     return count;
   }, [activeFilters])
@@ -326,10 +325,12 @@ function Dashboard() {
       );
     }
 
-    if (activeFilters.companySearch.trim()) {
-      const searchTerm = activeFilters.companySearch.toLowerCase().trim();
-      filtered = filtered.filter(app => 
-        app.company.toLowerCase().includes(searchTerm)
+    if (globalSearch.trim()) {
+      const searchTerm = globalSearch.toLowerCase().trim();
+      filtered = filtered.filter(app =>
+        app.company.toLowerCase().includes(searchTerm) ||
+        app.role.toLowerCase().includes(searchTerm) ||
+        (app.notes && app.notes.toLowerCase().includes(searchTerm))
       );
     }
 
@@ -362,7 +363,12 @@ function Dashboard() {
     }
 
     return filtered;
-  }, [applications, activeFilters, activeSort])
+  }, [applications, activeFilters, activeSort, globalSearch])
+
+  const hasActiveSearch = globalSearch.trim().length > 0
+  const emptyListMessage = hasActiveSearch
+    ? 'No jobs match your search.'
+    : 'No jobs added yet. Add your first job!'
 
   if (userLoading) {
     return (
@@ -412,6 +418,12 @@ function Dashboard() {
             </p>
           </div>
 
+          <SearchBar
+            value={globalSearch}
+            onChange={setGlobalSearch}
+            onClear={() => setGlobalSearch('')}
+          />
+
           <ActionButtons
             onAddJob={handleAddJob}
             onFilters={handleFilters}
@@ -437,6 +449,7 @@ function Dashboard() {
               applications={filteredAndSortedApplications}
               onEdit={handleEditJob}
               onStatusChange={handleStatusChange}
+              emptyMessage={emptyListMessage}
             />
           ) : (
             <JobList 
@@ -448,6 +461,7 @@ function Dashboard() {
               selectedJobs={selectedJobs}
               onToggleSelection={handleToggleSelection}
               viewMode={viewMode}
+              emptyMessage={emptyListMessage}
             />
           )}
         </div>

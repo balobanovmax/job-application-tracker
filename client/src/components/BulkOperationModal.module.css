@@ -1,6 +1,6 @@
 .selectionInfo {
   font-size: 1rem;
-  color: #6366f1;
+  color: var(--color-accent);
   text-align: center;
   margin-bottom: 1.5rem;
   font-weight: 600;
@@ -16,7 +16,7 @@
 .sectionTitle {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -28,28 +28,28 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--color-border);
   background-color: rgba(255, 255, 255, 0.02);
-  color: #cbd5e1;
+  color: var(--color-text-secondary);
   font-family: inherit;
   text-align: left;
 }
 
 .operationButton:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
   transform: translateY(-1px);
 }
 
 .operationButton.active {
-  background-color: #6366f1;
-  border-color: #6366f1;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-primary);
 }
 
 .operationButton.deleteButton.active {
-  background-color: #ef4444;
-  border-color: #ef4444;
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 .operationButton:disabled {
@@ -77,7 +77,7 @@
   display: block;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: #cbd5e1;
+  color: var(--color-text-secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -86,9 +86,9 @@
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   font-size: 1rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: var(--color-bg-hover);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
   cursor: pointer;
   transition: all 0.2s;
   font-family: inherit;
@@ -96,12 +96,12 @@
 
 .select:hover {
   background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--color-border-strong);
 }
 
 .select:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: var(--color-accent);
   background-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -114,14 +114,14 @@
 
 .warningText {
   font-size: 0.875rem;
-  color: #f87171;
+  color: var(--color-danger);
   margin: 0;
   text-align: center;
 }
 
 .confirmDeleteButton {
-  background-color: #ef4444;
-  color: #ffffff;
+  background-color: var(--color-danger);
+  color: var(--color-text-primary);
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-size: 0.9375rem;
@@ -133,7 +133,7 @@
 }
 
 .confirmDeleteButton:hover:not(:disabled) {
-  background-color: #dc2626;
+  background-color: var(--color-danger-hover);
   transform: translateY(-1px);
 }
 

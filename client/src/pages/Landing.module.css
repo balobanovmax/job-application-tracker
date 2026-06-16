@@ -1,6 +1,6 @@
 .landing {
   min-height: 100vh;
-  background-color: #0f0f0f;
+  background-color: var(--color-bg-page);
   display: flex;
   flex-direction: column;
 }
@@ -21,7 +21,7 @@
 .title {
   font-size: 4rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin-bottom: 1.5rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -29,7 +29,7 @@
 
 .subtitle {
   font-size: 1.25rem;
-  color: #cbd5e1;
+  color: var(--color-text-secondary);
   margin-bottom: 2rem;
   line-height: 1.6;
 }
@@ -55,29 +55,29 @@
 
 .loginBtn {
   background-color: transparent;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
 }
 
 .loginBtn:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--color-bg-hover);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
 }
 
 .signupBtn {
-  background-color: #6366f1;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
 }
 
 .signupBtn:hover {
-  background-color: #4f46e5;
+  background-color: var(--color-accent-hover);
   transform: translateY(-2px);
 }
 
 .description {
   font-size: 1.125rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   line-height: 1.6;
   max-width: 600px;
   margin: 0 auto;
@@ -85,14 +85,14 @@
 
 .footer {
   padding: 2rem 1rem;
-  background-color: #1a1a1a;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--color-bg-surface);
+  border-top: 1px solid var(--color-border);
 }
 
 .copyright {
   text-align: center;
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin: 0;
 }
 

@@ -1,10 +1,12 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
+import { useTheme } from '../context/ThemeContext'
 import styles from './Navbar.module.css'
 
 function Navbar() {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -62,6 +64,9 @@ function Navbar() {
 
         {/* Desktop Buttons */}
         <div className={styles.buttons}>
+          <button onClick={toggleTheme} className={styles.themeBtn}>
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </button>
           {isAuthenticated ? (
             <>
               {isOnStatisticsPage && (
@@ -88,6 +93,9 @@ function Navbar() {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className={styles.mobileMenu}>
+            <button onClick={toggleTheme} className={styles.mobileMenuItem}>
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </button>
             {isAuthenticated ? (
               <>
                 {isOnStatisticsPage && (

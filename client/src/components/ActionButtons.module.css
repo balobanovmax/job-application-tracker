@@ -20,12 +20,12 @@
 }
 
 .primaryButton {
-  background-color: #6366f1;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
 }
 
 .primaryButton:hover {
-  background-color: #4f46e5;
+  background-color: var(--color-accent-hover);
   transform: translateY(-1px);
 }
 
@@ -35,13 +35,13 @@
 
 .secondaryButton {
   background-color: transparent;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
 }
 
 .secondaryButton:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
   transform: translateY(-1px);
 }
 
@@ -53,8 +53,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #6366f1;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
   font-size: 0.75rem;
   font-weight: 600;
   min-width: 1.25rem;
@@ -73,12 +73,12 @@
   transition: all 0.2s;
   border: none;
   font-family: inherit;
-  background-color: #ef4444;
-  color: #ffffff;
+  background-color: var(--color-danger);
+  color: var(--color-text-primary);
 }
 
 .deleteAllButton:hover {
-  background-color: #dc2626;
+  background-color: var(--color-danger-hover);
   transform: translateY(-1px);
 }
 
@@ -91,38 +91,38 @@
   align-items: center;
   padding: 0.75rem 1.5rem;
   background-color: rgba(99, 102, 241, 0.1);
-  border: 1px solid #6366f1;
+  border: 1px solid var(--color-accent);
   border-radius: 0.5rem;
 }
 
 .selectionText {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #6366f1;
+  color: var(--color-accent);
 }
 
 .cancelButton {
   background-color: transparent;
-  color: #ffffff;
+  color: var(--color-text-primary);
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-size: 0.9375rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--color-border-strong);
   font-family: inherit;
 }
 
 .cancelButton:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
   transform: translateY(-1px);
 }
 
 .bulkOperationButton {
-  background-color: #6366f1;
-  color: #ffffff;
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   font-size: 0.9375rem;
@@ -134,7 +134,7 @@
 }
 
 .bulkOperationButton:hover:not(:disabled) {
-  background-color: #4f46e5;
+  background-color: var(--color-accent-hover);
   transform: translateY(-1px);
 }
 

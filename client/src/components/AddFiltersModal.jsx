@@ -6,8 +6,7 @@ function AddFiltersModal({ isOpen, onClose, onApplyFilters, onClearFilters, init
     dateFrom: '',
     dateTo: '',
     statuses: [],
-    companySearch: '',
-    starred: 'all', // 'all', 'starred', 'unstarred'
+    starred: 'all',
   });
 
   useEffect(() => {
@@ -144,22 +143,6 @@ function AddFiltersModal({ isOpen, onClose, onApplyFilters, onClearFilters, init
               >
                 Unstarred Only
               </button>
-            </div>
-          </div>
-
-          {/* Company Search Filter */}
-          <div className={styles.filterSection}>
-            <h3 className={styles.sectionTitle}>Filter by Company</h3>
-            <div className={styles.formGroup}>
-              <input
-                type="text"
-                id="companySearch"
-                name="companySearch"
-                value={filters.companySearch}
-                onChange={handleChange}
-                className={styles.input}
-                placeholder="Search by company name..."
-              />
             </div>
           </div>
 

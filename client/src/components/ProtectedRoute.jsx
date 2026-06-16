@@ -1,20 +1,13 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate } from 'react-router-dom'
+import styles from './ProtectedRoute.module.css'
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useAuth0()
 
   if (isLoading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#0f0f0f',
-        color: '#ffffff',
-        fontSize: '1.125rem'
-      }}>
+      <div className={styles.loading}>
         Loading...
       </div>
     )
@@ -28,4 +21,3 @@ function ProtectedRoute({ children }) {
 }
 
 export default ProtectedRoute
-

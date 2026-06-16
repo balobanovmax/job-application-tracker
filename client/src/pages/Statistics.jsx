@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { pdf } from '@react-pdf/renderer'
 import Navbar from '../components/Navbar'
 import FunnelChart from '../components/FunnelChart'
@@ -8,15 +8,27 @@ import PDFExportOptionsModal from '../components/PDFExportOptionsModal'
 import { useUser } from '../hooks/useUser'
 import { useApplications } from '../hooks/useApplications'
 import { exportJobApplicationsCSV } from '../utils/csvExport'
+import { buildApplicationTimeline, parseApplicationDate } from '../utils/applicationTimeline'
 import styles from './Statistics.module.css'
 
 function Statistics() {
   const { auth0User, loading: userLoading, error: userError } = useUser()
-  const { applications, loading: appsLoading, error: appsError } = useApplications({
+  const { applications, loading: appsLoading, error: appsError, refetch } = useApplications({
     enabled: !userLoading && !userError,
   })
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false)
   const [isPDFOptionsModalOpen, setIsPDFOptionsModalOpen] = useState(false)
+
+  useEffect(() => {
+    const handleFocus = () => {
+      if (!userLoading && !userError) {
+        refetch()
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+    return () => window.removeEventListener('focus', handleFocus)
+  }, [refetch, userLoading, userError])
 
   // Calculate statistics
   const totalApplications = applications.length
@@ -39,100 +51,10 @@ function Statistics() {
     { label: 'Rejected', value: rejectedCount, color: '#ef4444' },
   ]
 
-  const timeSeriesData = useMemo(() => {
-    if (applications.length === 0) return { data: [], unit: 'days' };
-
-    // Sort applications by date_applied
-    const sortedApps = [...applications].sort((a, b) => 
-      new Date(a.date_applied) - new Date(b.date_applied)
-    );
-
-    const firstDate = new Date(sortedApps[0].date_applied);
-    const lastDate = new Date(sortedApps[sortedApps.length - 1].date_applied);
-    
-    // Set to start of day for proper comparison
-    firstDate.setHours(0, 0, 0, 0);
-    lastDate.setHours(0, 0, 0, 0);
-    
-    const daysDiff = Math.ceil((lastDate - firstDate) / (1000 * 60 * 60 * 24));
-
-    // Determine granularity: daily if < 28 days, weekly if >= 28 days
-    const useDaily = daysDiff < 28;
-
-    if (useDaily) {
-      // Group by day and fill in all days in range
-      const grouped = {};
-      sortedApps.forEach(app => {
-        const date = new Date(app.date_applied);
-        date.setHours(0, 0, 0, 0);
-        const key = date.toISOString().split('T')[0]; // YYYY-MM-DD
-        grouped[key] = (grouped[key] || 0) + 1;
-      });
-
-      // Fill in all days in the range (including days with 0 applications)
-      const result = [];
-      const currentDate = new Date(firstDate);
-      
-      while (currentDate <= lastDate) {
-        const key = currentDate.toISOString().split('T')[0];
-        result.push({
-          label: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          value: grouped[key] || 0,
-          date: key
-        });
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-
-      return { data: result, unit: 'days' };
-    } else {
-      // Group by week
-      const getWeekKey = (dateStr) => {
-        const d = new Date(dateStr);
-        d.setHours(0, 0, 0, 0);
-        const day = d.getDay();
-        const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday
-        const monday = new Date(d);
-        monday.setDate(diff);
-        monday.setHours(0, 0, 0, 0);
-        return monday.toISOString().split('T')[0];
-      };
-
-      const grouped = {};
-      sortedApps.forEach(app => {
-        const key = getWeekKey(app.date_applied);
-        grouped[key] = (grouped[key] || 0) + 1;
-      });
-
-      // Fill in all weeks in the range
-      const result = [];
-      const firstWeekKey = getWeekKey(sortedApps[0].date_applied);
-      const lastWeekKey = getWeekKey(sortedApps[sortedApps.length - 1].date_applied);
-      
-      const currentWeek = new Date(firstWeekKey);
-      const lastWeek = new Date(lastWeekKey);
-      
-      while (currentWeek <= lastWeek) {
-        const key = currentWeek.toISOString().split('T')[0];
-        const weekStart = new Date(currentWeek);
-        const weekEnd = new Date(currentWeek);
-        weekEnd.setDate(weekEnd.getDate() + 6);
-        
-        // Format: "Jan 1-7"
-        const startLabel = weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        const endDay = weekEnd.getDate();
-        const label = `${startLabel}-${endDay}`;
-        
-        result.push({
-          label: label,
-          value: grouped[key] || 0,
-          date: key
-        });
-        currentWeek.setDate(currentWeek.getDate() + 7);
-      }
-
-      return { data: result, unit: 'weeks' };
-    }
-  }, [applications])
+  const timeSeriesData = useMemo(
+    () => buildApplicationTimeline(applications),
+    [applications]
+  )
 
   // Handle PDF export - open options modal
   const handleExportPDF = () => {
@@ -155,101 +77,26 @@ function Statistics() {
       
       // Apply date range filter
       if (options.dateFrom) {
-        const fromDate = new Date(options.dateFrom);
-        fromDate.setHours(0, 0, 0, 0);
-        filteredApps = filteredApps.filter(app => new Date(app.date_applied) >= fromDate);
+        const fromDate = parseApplicationDate(options.dateFrom)
+        filteredApps = filteredApps.filter(app => {
+          const appDate = parseApplicationDate(app.date_applied)
+          return appDate && appDate >= fromDate
+        })
       }
-      
+
       if (options.dateTo) {
-        const toDate = new Date(options.dateTo);
-        toDate.setHours(23, 59, 59, 999);
-        filteredApps = filteredApps.filter(app => new Date(app.date_applied) <= toDate);
+        const toDate = parseApplicationDate(options.dateTo)
+        filteredApps = filteredApps.filter(app => {
+          const appDate = parseApplicationDate(app.date_applied)
+          return appDate && appDate <= toDate
+        })
       }
       
       console.log('Filtered applications:', filteredApps.length, 'of', applications.length);
       
-      // Calculate timeline data for filtered applications if needed
-      let filteredTimelineData = null;
-      if (options.includeTimeline && filteredApps.length > 0) {
-        // Sort applications by date_applied
-        const sortedApps = [...filteredApps].sort((a, b) => 
-          new Date(a.date_applied) - new Date(b.date_applied)
-        );
-
-        const firstDate = new Date(sortedApps[0].date_applied);
-        const lastDate = new Date(sortedApps[sortedApps.length - 1].date_applied);
-        
-        firstDate.setHours(0, 0, 0, 0);
-        lastDate.setHours(0, 0, 0, 0);
-        
-        const daysDiff = Math.ceil((lastDate - firstDate) / (1000 * 60 * 60 * 24));
-        const useDaily = daysDiff < 28;
-
-        if (useDaily) {
-          // Group by day
-          const grouped = {};
-          sortedApps.forEach(app => {
-            const date = new Date(app.date_applied);
-            date.setHours(0, 0, 0, 0);
-            const key = date.toISOString().split('T')[0];
-            grouped[key] = (grouped[key] || 0) + 1;
-          });
-
-          const result = [];
-          const currentDate = new Date(firstDate);
-          
-          while (currentDate <= lastDate) {
-            const key = currentDate.toISOString().split('T')[0];
-            result.push({
-              label: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-              value: grouped[key] || 0,
-            });
-            currentDate.setDate(currentDate.getDate() + 1);
-          }
-          
-          filteredTimelineData = { data: result, unit: 'days' };
-        } else {
-          // Group by week
-          const getWeekKey = (date) => {
-            const d = new Date(date);
-            d.setHours(0, 0, 0, 0);
-            const day = d.getDay();
-            const diff = d.getDate() - day;
-            const weekStart = new Date(d.setDate(diff));
-            return weekStart.toISOString().split('T')[0];
-          };
-
-          const grouped = {};
-          sortedApps.forEach(app => {
-            const key = getWeekKey(app.date_applied);
-            grouped[key] = (grouped[key] || 0) + 1;
-          });
-
-          const result = [];
-          const currentWeekStart = new Date(firstDate);
-          currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
-          
-          const lastWeekStart = new Date(lastDate);
-          lastWeekStart.setDate(lastWeekStart.getDate() - lastWeekStart.getDay());
-          
-          while (currentWeekStart <= lastWeekStart) {
-            const key = currentWeekStart.toISOString().split('T')[0];
-            const weekEnd = new Date(currentWeekStart);
-            weekEnd.setDate(weekEnd.getDate() + 6);
-            
-            const label = `${currentWeekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}-${weekEnd.getDate()}`;
-            
-            result.push({
-              label,
-              value: grouped[key] || 0,
-            });
-            
-            currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-          }
-          
-          filteredTimelineData = { data: result, unit: 'weeks' };
-        }
-      }
+      const filteredTimelineData = options.includeTimeline && filteredApps.length > 0
+        ? buildApplicationTimeline(filteredApps)
+        : null
       
       console.log('Creating PDF blob...');
       const blob = await pdf(
@@ -388,20 +235,16 @@ function Statistics() {
             <p className={styles.errorText}>Error loading statistics: {appsError}</p>
           ) : (
             <>
-              {/* General Statistics Section */}
               <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>1. General Statistics</h2>
-                
-                {/* Total Applications Container Card */}
+                <h2 className={styles.sectionTitle}>General Statistics</h2>
+
                 <div className={styles.totalApplicationsCard}>
                   <div className={styles.totalHeader}>
                     <h3 className={styles.totalTitle}>Total Applications</h3>
                     <p className={styles.totalValue}>{totalApplications}</p>
                   </div>
 
-                  {/* Nested Status Cards Grid */}
                   <div className={styles.nestedStatsGrid}>
-                    {/* Applied Card */}
                     <div className={styles.nestedStatCard}>
                       <div className={styles.cardHeader}>
                         <span className={`${styles.statusBadge} ${styles.applied}`}>
@@ -410,11 +253,12 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{appliedCount}</p>
-                        <p className={styles.cardPercentage}>({calculatePercentage(appliedCount)}%)</p>
+                        <p className={styles.cardPercentage}>
+                          {calculatePercentage(appliedCount)}%
+                        </p>
                       </div>
                     </div>
 
-                    {/* Interview Card */}
                     <div className={styles.nestedStatCard}>
                       <div className={styles.cardHeader}>
                         <span className={`${styles.statusBadge} ${styles.interview}`}>
@@ -423,11 +267,12 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{interviewCount}</p>
-                        <p className={styles.cardPercentage}>({calculatePercentage(interviewCount)}%)</p>
+                        <p className={styles.cardPercentage}>
+                          {calculatePercentage(interviewCount)}%
+                        </p>
                       </div>
                     </div>
 
-                    {/* Offer Card */}
                     <div className={styles.nestedStatCard}>
                       <div className={styles.cardHeader}>
                         <span className={`${styles.statusBadge} ${styles.offer}`}>
@@ -436,11 +281,12 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{offerCount}</p>
-                        <p className={styles.cardPercentage}>({calculatePercentage(offerCount)}%)</p>
+                        <p className={styles.cardPercentage}>
+                          {calculatePercentage(offerCount)}%
+                        </p>
                       </div>
                     </div>
 
-                    {/* Rejected Card */}
                     <div className={styles.nestedStatCard}>
                       <div className={styles.cardHeader}>
                         <span className={`${styles.statusBadge} ${styles.rejected}`}>
@@ -449,24 +295,35 @@ function Statistics() {
                       </div>
                       <div className={styles.cardValueContainer}>
                         <p className={styles.cardValue}>{rejectedCount}</p>
-                        <p className={styles.cardPercentage}>({calculatePercentage(rejectedCount)}%)</p>
+                        <p className={styles.cardPercentage}>
+                          {calculatePercentage(rejectedCount)}%
+                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
               </section>
 
-              {/* Visualizations Section */}
               <section className={styles.section}>
-                <h2 className={styles.sectionTitle}>2. Visualizations</h2>
-                
+                <h2 className={styles.sectionTitle}>Visualizations</h2>
+
                 <div className={styles.visualizationCard}>
-                  <h3 className={styles.visualizationTitle}>Proportional Blocks</h3>
+                  <div className={styles.visualizationHeader}>
+                    <h3 className={styles.visualizationTitle}>Proportional Blocks</h3>
+                    <p className={styles.visualizationSubtitle}>
+                      Width reflects relative count at each stage
+                    </p>
+                  </div>
                   <FunnelChart data={funnelData} />
                 </div>
 
                 <div className={styles.visualizationCard}>
-                  <h3 className={styles.visualizationTitle}>Applications Over Time</h3>
+                  <div className={styles.visualizationHeader}>
+                    <h3 className={styles.visualizationTitle}>Applications Over Time</h3>
+                    <p className={styles.visualizationSubtitle}>
+                      How many applications you submitted over your search period
+                    </p>
+                  </div>
                   <LineChart data={timeSeriesData.data} unit={timeSeriesData.unit} />
                 </div>
               </section>
