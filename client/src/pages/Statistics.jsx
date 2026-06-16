@@ -12,7 +12,9 @@ import styles from './Statistics.module.css'
 
 function Statistics() {
   const { auth0User, loading: userLoading, error: userError } = useUser()
-  const { applications, loading: appsLoading, error: appsError } = useApplications()
+  const { applications, loading: appsLoading, error: appsError } = useApplications({
+    enabled: !userLoading && !userError,
+  })
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false)
   const [isPDFOptionsModalOpen, setIsPDFOptionsModalOpen] = useState(false)
 

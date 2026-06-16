@@ -1,0 +1,74 @@
+.viewSection {
+  margin-bottom: 1.5rem;
+}
+
+.fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.legend {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.radioOption {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.radioOption:hover:not(.radioActive) {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.radioActive {
+  border-color: #6366f1;
+  background-color: rgba(99, 102, 241, 0.15);
+}
+
+.radioInput {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #6366f1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.radioLabel {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .radioGroup {
+    gap: 0.5rem;
+  }
+
+  .radioOption {
+    padding: 0.65rem 0.875rem;
+  }
+
+  .radioLabel {
+    font-size: 0.875rem;
+  }
+}

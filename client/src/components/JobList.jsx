@@ -1,7 +1,15 @@
 import styles from './JobList.module.css';
 
-function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode = false, selectedJobs = [], onToggleSelection }) {
-  // Helper function to format status display text
+function JobList({
+  applications,
+  onEdit,
+  onDelete,
+  onToggleStar,
+  isSelectionMode = false,
+  selectedJobs = [],
+  onToggleSelection,
+  viewMode = 'tiles',
+}) {
   const formatStatus = (status) => {
     if (status === 'applied') {
       return 'Applied (no response)';
@@ -15,12 +23,120 @@ function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode
     }
   };
 
+  const renderActionButtons = (app) => (
+    <div className={styles.buttonGroup}>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleStar(app.id, !app.starred);
+        }}
+        className={app.starred ? styles.unstarButton : styles.starButton}
+        aria-label={app.starred ? 'Unstar job' : 'Star job'}
+      >
+        {app.starred ? 'Unstar' : 'Star'}
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(app);
+        }}
+        className={styles.deleteButton}
+        aria-label="Delete job"
+      >
+        Delete
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(app);
+        }}
+        className={styles.editButton}
+        aria-label="Edit job"
+      >
+        Edit
+      </button>
+    </div>
+  );
+
   if (applications.length === 0) {
     return (
       <div className={styles.emptyState}>
         <p className={styles.emptyMessage}>
-          No job applications found.
+          No jobs added yet. Add your first job!
         </p>
+      </div>
+    );
+  }
+
+  if (viewMode === 'list') {
+    return (
+      <div className={styles.jobList}>
+        <div className={styles.listRows}>
+          {applications.map((app) => {
+            const isSelected = selectedJobs.includes(app.id);
+
+            return (
+              <div
+                key={app.id}
+                className={`${styles.listRow} ${isSelectionMode ? styles.selectable : ''} ${isSelected ? styles.selected : ''}`}
+                onClick={() => handleCardClick(app)}
+              >
+                {isSelectionMode && (
+                  <div className={styles.listCheckbox}>
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelection(app.id)}
+                      className={styles.checkboxInput}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                )}
+
+                <div className={styles.listMain}>
+                  <div className={styles.listPrimary}>
+                    {app.starred && <span className={styles.listStar}>★</span>}
+                    <span className={styles.listCompany}>{app.company}</span>
+                    <span className={styles.listDivider}>·</span>
+                    <span className={styles.listRole}>{app.role}</span>
+                  </div>
+                  {(app.notes || app.application_url) && (
+                    <div className={styles.listMeta}>
+                      {app.notes && (
+                        <span className={styles.listNotes}>{app.notes}</span>
+                      )}
+                      {app.application_url && (
+                        <a
+                          href={app.application_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.listLink}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          View Application →
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <span className={`${styles.status} ${styles.listStatus} ${styles[app.status]}`}>
+                  {formatStatus(app.status)}
+                </span>
+
+                <span className={styles.listDate}>
+                  {new Date(app.date_applied).toLocaleDateString()}
+                </span>
+
+                {!isSelectionMode && (
+                  <div className={styles.listActions}>
+                    {renderActionButtons(app)}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
@@ -30,10 +146,10 @@ function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode
       <div className={styles.jobGrid}>
         {applications.map((app) => {
           const isSelected = selectedJobs.includes(app.id);
-          
+
           return (
-            <div 
-              key={app.id} 
+            <div
+              key={app.id}
               className={`${styles.jobCard} ${isSelectionMode ? styles.selectable : ''} ${isSelected ? styles.selected : ''}`}
               onClick={() => handleCardClick(app)}
             >
@@ -48,13 +164,12 @@ function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode
                 </div>
               )}
 
-              {/* Star icon in bottom-left corner */}
               {app.starred && (
                 <div className={styles.starIcon}>
                   ★
                 </div>
               )}
-              
+
               <div className={styles.jobHeader}>
                 <h3 className={styles.company}>{app.company}</h3>
                 <span className={`${styles.status} ${styles[app.status]}`}>
@@ -68,9 +183,9 @@ function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode
                 </p>
               )}
               {app.application_url && (
-                <a 
-                  href={app.application_url} 
-                  target="_blank" 
+                <a
+                  href={app.application_url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className={styles.applicationLink}
                   onClick={(e) => e.stopPropagation()}
@@ -82,40 +197,7 @@ function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode
                 <p className={styles.date}>
                   Applied: {new Date(app.date_applied).toLocaleDateString()}
                 </p>
-                {!isSelectionMode && (
-                  <div className={styles.buttonGroup}>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleStar(app.id, !app.starred);
-                      }} 
-                      className={app.starred ? styles.unstarButton : styles.starButton}
-                      aria-label={app.starred ? "Unstar job" : "Star job"}
-                    >
-                      {app.starred ? 'Unstar' : 'Star'}
-                    </button>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(app);
-                      }} 
-                      className={styles.deleteButton}
-                      aria-label="Delete job"
-                    >
-                      Delete
-                    </button>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(app);
-                      }} 
-                      className={styles.editButton}
-                      aria-label="Edit job"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                )}
+                {!isSelectionMode && renderActionButtons(app)}
               </div>
             </div>
           );
@@ -126,4 +208,3 @@ function JobList({ applications, onEdit, onDelete, onToggleStar, isSelectionMode
 }
 
 export default JobList;
-

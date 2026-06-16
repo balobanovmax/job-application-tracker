@@ -1,10 +1,9 @@
 const db = require('../db/queries');
+const { findOrCreateUserFromAuth } = require('../utils/authUser');
 
 const getAllApplications = async (req, res, next) => {
   try {
-    const authSub = req.auth.payload.sub;
-    
-    const user = await db.findOrCreateUser(authSub);
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
     let applications = await db.getApplicationsByUserId(user.id);
 
     const { status, company, date_applied } = req.query;
@@ -40,10 +39,9 @@ const getAllApplications = async (req, res, next) => {
 
 const getApplicationById = async (req, res, next) => {
   try {
-    const authSub = req.auth.payload.sub;
     const { id } = req.params;
 
-    const user = await db.findOrCreateUser(authSub);
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
     const application = await db.getApplicationById(id, user.id);
 
     if (!application) {
@@ -64,7 +62,6 @@ const getApplicationById = async (req, res, next) => {
 
 const createApplication = async (req, res, next) => {
   try {
-    const authSub = req.auth.payload.sub;
     const { company, role, status, date_applied, notes, application_url, starred } = req.body;
 
     if (!company || !role) {
@@ -90,7 +87,7 @@ const createApplication = async (req, res, next) => {
       });
     }
 
-    const user = await db.findOrCreateUser(authSub);
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
     const application = await db.createApplication(
       user.id,
       company,
@@ -113,11 +110,10 @@ const createApplication = async (req, res, next) => {
 
 const updateApplication = async (req, res, next) => {
   try {
-    const authSub = req.auth.payload.sub;
     const { id } = req.params;
     const { company, role, status, date_applied, notes, application_url, starred } = req.body;
 
-    const user = await db.findOrCreateUser(authSub);
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
     const existingApp = await db.getApplicationById(id, user.id);
     
     if (!existingApp) {
@@ -165,10 +161,9 @@ const updateApplication = async (req, res, next) => {
 
 const deleteApplication = async (req, res, next) => {
   try {
-    const authSub = req.auth.payload.sub;
     const { id } = req.params;
 
-    const user = await db.findOrCreateUser(authSub);
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
     const application = await db.deleteApplication(id, user.id);
 
     if (!application) {
@@ -190,9 +185,7 @@ const deleteApplication = async (req, res, next) => {
 
 const deleteAllApplications = async (req, res, next) => {
   try {
-    const authSub = req.auth.payload.sub;
-
-    const user = await db.findOrCreateUser(authSub);
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
     const applications = await db.deleteAllApplications(user.id);
 
     res.json({

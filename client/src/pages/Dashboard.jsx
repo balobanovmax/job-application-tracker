@@ -8,6 +8,7 @@ import AddJobModal from '../components/AddJobModal'
 import EditJobModal from '../components/EditJobModal'
 import AddFiltersModal from '../components/AddFiltersModal'
 import SortModal from '../components/SortModal'
+import ViewModeModal from '../components/ViewModeModal'
 import DeleteJobModal from '../components/DeleteJobModal'
 import DeleteAllJobsModal from '../components/DeleteAllJobsModal'
 import DuplicateWarningModal from '../components/DuplicateWarningModal'
@@ -18,8 +19,10 @@ import { applicationAPI } from '../utils/api'
 import styles from './Dashboard.module.css'
 
 function Dashboard() {
-  const { auth0User, loading: userLoading, error: userError } = useUser()
-  const { applications, loading: appsLoading, error: appsError, refetch, updateApplicationOptimistic } = useApplications()
+  const { auth0User, user: dbUser, loading: userLoading, error: userError } = useUser()
+  const { applications, loading: appsLoading, error: appsError, refetch, updateApplicationOptimistic } = useApplications({
+    enabled: !userLoading && !userError,
+  })
   const { getAccessTokenSilently } = useAuth0()
   const navigate = useNavigate()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -28,6 +31,7 @@ function Dashboard() {
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false)
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false)
   const [isSortModalOpen, setIsSortModalOpen] = useState(false)
+  const [isViewModeModalOpen, setIsViewModeModalOpen] = useState(false)
   const [isDuplicateWarningOpen, setIsDuplicateWarningOpen] = useState(false)
   const [isBulkOperationModalOpen, setIsBulkOperationModalOpen] = useState(false)
   const [isSelectionMode, setIsSelectionMode] = useState(false)
@@ -43,6 +47,23 @@ function Dashboard() {
     starred: 'all',
   })
   const [activeSort, setActiveSort] = useState('')
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem('jobViewMode') === 'list' ? 'list' : 'tiles'
+  })
+
+  const handleChangeViewMode = () => {
+    setIsViewModeModalOpen(true)
+  }
+
+  const handleCloseViewModeModal = () => {
+    setIsViewModeModalOpen(false)
+  }
+
+  const handleApplyViewMode = (mode) => {
+    setViewMode(mode)
+    localStorage.setItem('jobViewMode', mode)
+    setIsViewModeModalOpen(false)
+  }
 
   const handleAddJob = () => {
     setIsAddModalOpen(true)
@@ -351,6 +372,10 @@ function Dashboard() {
     )
   }
 
+  const displayName = auth0User?.name
+    || auth0User?.email
+    || (dbUser?.email?.endsWith('@auth0.user') ? null : dbUser?.email)
+
   return (
     <div className={styles.dashboard}>
       <Navbar />
@@ -358,9 +383,10 @@ function Dashboard() {
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <h1 className={styles.welcome}>
-              Welcome, {auth0User?.name || auth0User?.email}!
-            </h1>
+            <h1 className={styles.welcome}>Welcome</h1>
+            {displayName && (
+              <p className={styles.username}>{displayName}</p>
+            )}
             <p className={styles.subtitle}>
               Manage your job applications and track your progress.
             </p>
@@ -379,6 +405,7 @@ function Dashboard() {
             selectedCount={selectedJobs.length}
             onCancelSelection={handleCancelSelection}
             onBulkOperation={handleBulkOperation}
+            onChangeViewMode={handleChangeViewMode}
           />
 
           {appsLoading ? (
@@ -394,6 +421,7 @@ function Dashboard() {
               isSelectionMode={isSelectionMode}
               selectedJobs={selectedJobs}
               onToggleSelection={handleToggleSelection}
+              viewMode={viewMode}
             />
           )}
         </div>
@@ -432,6 +460,13 @@ function Dashboard() {
         onApplySort={handleApplySort}
         onClearSort={handleClearSort}
         initialSort={activeSort}
+      />
+
+      <ViewModeModal
+        isOpen={isViewModeModalOpen}
+        onClose={handleCloseViewModeModal}
+        onApplyViewMode={handleApplyViewMode}
+        initialViewMode={viewMode}
       />
 
       <DeleteJobModal

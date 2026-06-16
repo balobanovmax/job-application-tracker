@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { applicationAPI } from '../utils/api';
 
-export const useApplications = () => {
+export const useApplications = (options = {}) => {
+  const { enabled = true } = options;
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,8 +40,11 @@ export const useApplications = () => {
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
     fetchApplications();
-  }, [fetchApplications]);
+  }, [fetchApplications, enabled]);
 
   return {
     applications,

@@ -1,24 +1,9 @@
 const db = require('../db/queries');
-
+const { extractAuthUser } = require('../utils/authUser');
 
 const getCurrentUser = async (req, res, next) => {
   try {
-    // Extract Auth0 user info from the JWT token
-    const auth0Id = req.auth.payload.sub;
-    
-    // Try multiple sources for email
-    const email = req.auth.payload.email 
-      || req.auth.payload.name 
-      || req.auth.payload.nickname
-      || `${auth0Id.split('|')[1]}@auth0.user`;
-
-    console.log('Auth0 Payload:', {
-      sub: auth0Id,
-      email: req.auth.payload.email,
-      name: req.auth.payload.name,
-      nickname: req.auth.payload.nickname,
-      fullPayload: req.auth.payload
-    });
+    const { auth0Id, email } = extractAuthUser(req.auth.payload);
 
     if (!auth0Id) {
       return res.status(400).json({ 
@@ -33,7 +18,6 @@ const getCurrentUser = async (req, res, next) => {
       });
     }
 
-    // Find or create user in database
     const user = await db.findOrCreateUser(auth0Id, email);
 
     res.json({

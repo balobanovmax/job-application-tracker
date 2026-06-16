@@ -199,9 +199,172 @@
   max-width: 400px;
 }
 
+.listRows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.listRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.listRow:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.listRow.selectable {
+  cursor: pointer;
+}
+
+.listRow.selected {
+  background-color: rgba(99, 102, 241, 0.1);
+  border-color: #6366f1;
+}
+
+.listCheckbox {
+  grid-column: 1;
+  margin-right: -0.5rem;
+}
+
+.listRow:has(.listCheckbox) {
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+}
+
+.listMain {
+  min-width: 0;
+}
+
+.listPrimary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.listStar {
+  color: #fbbf24;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.listCompany {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listDivider {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.listRole {
+  font-size: 0.9375rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.listNotes {
+  font-size: 0.8125rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.listLink {
+  font-size: 0.8125rem;
+  color: #6366f1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.listLink:hover {
+  color: #818cf8;
+  text-decoration: underline;
+}
+
+.listStatus {
+  flex-shrink: 0;
+}
+
+.listDate {
+  font-size: 0.8125rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.listActions {
+  flex-shrink: 0;
+}
+
+.listActions .buttonGroup {
+  gap: 0.375rem;
+}
+
+.listActions .deleteButton,
+.listActions .editButton,
+.listActions .starButton,
+.listActions .unstarButton {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.6875rem;
+}
+
 @media (max-width: 768px) {
   .jobGrid {
     grid-template-columns: 1fr;
+  }
+
+  .listRow {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .listRow:has(.listCheckbox) {
+    grid-template-columns: auto 1fr;
+  }
+
+  .listStatus,
+  .listDate,
+  .listActions {
+    justify-self: start;
+  }
+
+  .listActions {
+    width: 100%;
+  }
+
+  .listActions .buttonGroup {
+    width: 100%;
+    justify-content: flex-start;
   }
 }
 

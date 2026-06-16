@@ -7,6 +7,7 @@ function ActionButtons({
   onViewStatistics, 
   onDeleteAll, 
   onSelectMultiple,
+  onChangeViewMode,
   filterCount = 0, 
   sortCount = 0,
   isSelectionMode = false,
@@ -50,6 +51,9 @@ function ActionButtons({
         {sortCount > 0 && (
           <span className={styles.filterBadge}>{sortCount}</span>
         )}
+      </button>
+      <button onClick={onChangeViewMode} className={styles.secondaryButton}>
+        Change View Mode
       </button>
       <button onClick={onSelectMultiple} className={styles.secondaryButton}>
         Select Multiple
