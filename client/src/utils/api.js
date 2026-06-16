@@ -48,6 +48,20 @@ export const applicationAPI = {
   getById: (getAccessToken, id) => 
     apiRequest(`/api/applications/${id}`, getAccessToken),
 
+  getStatusHistory: (getAccessToken, id) =>
+    apiRequest(`/api/applications/${id}/history`, getAccessToken),
+
+  clearStatusHistory: (getAccessToken, id) =>
+    apiRequest(`/api/applications/${id}/history`, getAccessToken, {
+      method: 'DELETE',
+    }),
+
+  updateStatusHistoryEntry: (getAccessToken, applicationId, historyId, data) =>
+    apiRequest(`/api/applications/${applicationId}/history/${historyId}`, getAccessToken, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
 
   create: (getAccessToken, data) => 
     apiRequest('/api/applications', getAccessToken, {

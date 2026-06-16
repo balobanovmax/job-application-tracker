@@ -60,6 +60,108 @@ const getApplicationById = async (req, res, next) => {
   }
 };
 
+const getApplicationStatusHistory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
+    const application = await db.getApplicationById(id, user.id);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        error: 'Application not found'
+      });
+    }
+
+    const history = await db.getStatusHistoryByApplicationId(id, user.id);
+
+    res.json({
+      success: true,
+      data: history
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const clearApplicationStatusHistory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
+    const application = await db.getApplicationById(id, user.id);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        error: 'Application not found'
+      });
+    }
+
+    const deletedCount = await db.deleteStatusHistoryByApplicationId(id, user.id);
+
+    res.json({
+      success: true,
+      message: 'Status history cleared',
+      count: deletedCount
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateApplicationStatusHistoryEntry = async (req, res, next) => {
+  try {
+    const { id, historyId } = req.params;
+    const { status, changed_at } = req.body;
+
+    const user = await findOrCreateUserFromAuth(req.auth.payload);
+    const application = await db.getApplicationById(id, user.id);
+
+    if (!application) {
+      return res.status(404).json({
+        success: false,
+        error: 'Application not found'
+      });
+    }
+
+    const validStatuses = ['applied', 'interview', 'offer', 'rejected'];
+    if (status && !validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: `Status must be one of: ${validStatuses.join(', ')}`
+      });
+    }
+
+    if (!status && !changed_at) {
+      return res.status(400).json({
+        success: false,
+        error: 'At least one field is required to update'
+      });
+    }
+
+    const entry = await db.updateStatusHistoryEntry(id, historyId, user.id, {
+      status,
+      changed_at
+    });
+
+    if (!entry) {
+      return res.status(404).json({
+        success: false,
+        error: 'History entry not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: entry
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createApplication = async (req, res, next) => {
   try {
     const { company, role, status, date_applied, notes, application_url, starred } = req.body;
@@ -201,6 +303,9 @@ const deleteAllApplications = async (req, res, next) => {
 module.exports = {
   getAllApplications,
   getApplicationById,
+  getApplicationStatusHistory,
+  clearApplicationStatusHistory,
+  updateApplicationStatusHistoryEntry,
   createApplication,
   updateApplication,
   deleteApplication,

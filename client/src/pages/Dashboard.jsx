@@ -470,6 +470,7 @@ function Dashboard() {
         onClose={handleCloseEditModal}
         onSubmit={handleSubmitEditJob}
         job={selectedJob}
+        onHistoryChange={refetch}
       />
 
       <AddFiltersModal
