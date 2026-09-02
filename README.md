@@ -1,14 +1,22 @@
 # Job Application Tracker
 
-A full-stack web app for tracking job applications — add roles, update status, and see how your search is going over time.
+A full-stack application for organizing job searches through tile, list, and Kanban views, with secure Auth0 authentication, application analytics, status histories, and CSV/PDF export.
 
 **[Live Demo](https://job-application-tracker-nine-gold.vercel.app)**
+
+### Dashboard
+
+![Dashboard showing job applications in tile view with status badges, filters, and search](./assets/dashboard.png)
+
+### Statistics
+
+![Statistics page with application metrics, charts, and PDF export](./assets/pdf-export.png)
 
 ---
 
 ## What it does
 
-You can log applications with company, role, status, and notes. The dashboard supports tile, list, and kanban views, plus filtering, sorting, and search. There’s a statistics page with charts, status history on each job, and CSV/PDF export. Login is handled through Auth0 (email/password or Google).
+Track applications by company, role, and status. Filter, sort, and search your pipeline, switch between tile, list, and kanban views, and review status history on each job. The statistics page breaks down your search with charts and supports CSV/PDF export. Sign in with email/password or Google.
 
 ---
 
