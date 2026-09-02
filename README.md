@@ -4,11 +4,11 @@ A full-stack application for organizing job searches through tile, list, and Kan
 
 **[Live Demo](https://job-application-tracker-nine-gold.vercel.app)**
 
-### Dashboard
+
 
 ![Dashboard showing job applications in tile view with status badges, filters, and search](./assets/dashboard.png)
 
-### Statistics
+
 
 ![Statistics page with application metrics, charts, and PDF export](./assets/pdf-export.png)
 
